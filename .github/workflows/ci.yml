@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  scaffold-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Verify scaffold files
+        run: |
+          test -f README.md
+          test -f LICENSE
+          test -f Dockerfile
+
+      - name: Basic public-safe guard
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|[^/])'; then
+            echo "Do not commit .env files"
+            exit 1
+          fi
