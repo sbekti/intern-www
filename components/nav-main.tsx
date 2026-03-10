@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import type { MouseEvent } from "react"
+import { usePathname, useRouter } from "next/navigation"
 
 import {
   SidebarGroup,
@@ -21,6 +22,22 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  function isItemActive(url: string) {
+    return url === "/"
+      ? pathname === url
+      : pathname === url || pathname.startsWith(`${url}/`)
+  }
+
+  function handleNavClick(event: MouseEvent<HTMLAnchorElement>, url: string) {
+    if (!isItemActive(url)) {
+      return
+    }
+
+    event.preventDefault()
+    router.refresh()
+  }
 
   return (
     <SidebarGroup>
@@ -30,12 +47,8 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
-                isActive={
-                  item.url === "/"
-                    ? pathname === item.url
-                    : pathname === item.url || pathname.startsWith(`${item.url}/`)
-                }
-                render={<Link href={item.url} />}
+                isActive={isItemActive(item.url)}
+                render={<Link href={item.url} onClick={(event) => handleNavClick(event, item.url)} />}
               >
                 {item.icon}
                 <span>{item.title}</span>
