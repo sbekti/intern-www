@@ -2,12 +2,15 @@
 
 import Link from "next/link"
 import type { MouseEvent } from "react"
+import * as React from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { LoaderCircleIcon } from "lucide-react"
 
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
@@ -23,6 +26,14 @@ export function NavMain({
 }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [isPending, startTransition] = React.useTransition()
+  const [refreshingUrl, setRefreshingUrl] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    if (!isPending) {
+      setRefreshingUrl(null)
+    }
+  }, [isPending])
 
   function isItemActive(url: string) {
     return url === "/"
@@ -36,7 +47,10 @@ export function NavMain({
     }
 
     event.preventDefault()
-    router.refresh()
+    setRefreshingUrl(url)
+    startTransition(() => {
+      router.refresh()
+    })
   }
 
   return (
@@ -53,6 +67,11 @@ export function NavMain({
                 {item.icon}
                 <span>{item.title}</span>
               </SidebarMenuButton>
+              {refreshingUrl === item.url ? (
+                <SidebarMenuBadge aria-live="polite" aria-label={`Refreshing ${item.title}`}>
+                  <LoaderCircleIcon className="animate-spin" />
+                </SidebarMenuBadge>
+              ) : null}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
