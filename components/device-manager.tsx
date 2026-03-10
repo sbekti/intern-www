@@ -266,9 +266,7 @@ export function DeviceManager({
                     </TableCell>
                     <TableCell>{device.mac_address}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">
-                        {device.vlan.name} ({device.vlan.vlan_id})
-                      </Badge>
+                      <Badge variant="outline">{device.vlan.name}</Badge>
                     </TableCell>
                     <TableCell>
                       {new Date(device.updated_at).toLocaleString()}
@@ -358,7 +356,7 @@ export function DeviceManager({
                     }))
                   }
                   items={sortedVlans.map((vlan) => ({
-                    label: `${vlan.name} (${vlan.vlan_id})`,
+                    label: vlan.name,
                     value: String(vlan.id),
                   }))}
                 >
@@ -369,7 +367,7 @@ export function DeviceManager({
                     <SelectGroup>
                       {sortedVlans.map((vlan) => (
                         <SelectItem key={vlan.id} value={String(vlan.id)}>
-                          {vlan.name} ({vlan.vlan_id})
+                          {vlan.name}
                         </SelectItem>
                       ))}
                     </SelectGroup>
