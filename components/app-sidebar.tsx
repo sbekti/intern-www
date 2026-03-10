@@ -14,10 +14,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
-  CommandIcon,
-  LayoutDashboardIcon,
+  HouseIcon,
   NetworkIcon,
   SmartphoneNfcIcon,
+  WaypointsIcon,
 } from "lucide-react"
 
 const data = {
@@ -25,7 +25,7 @@ const data = {
     {
       title: "Home",
       url: "/",
-      icon: <LayoutDashboardIcon />,
+      icon: <HouseIcon />,
     },
     {
       title: "Devices",
@@ -61,7 +61,7 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/" />}
             >
-              <CommandIcon className="size-5!" />
+              <WaypointsIcon className="size-5!" />
               <span className="text-base font-semibold">Intern</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
