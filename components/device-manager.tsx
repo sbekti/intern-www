@@ -243,7 +243,7 @@ export function DeviceManager({
               <EmptyContent>
                 <Button onClick={openCreate}>
                   <PlusIcon data-icon="inline-start" />
-                  Create Device
+                  Add Device
                 </Button>
               </EmptyContent>
             </Empty>

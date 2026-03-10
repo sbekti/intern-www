@@ -211,7 +211,7 @@ export function VlanManager({
               <EmptyContent>
                 <Button onClick={openCreate}>
                   <PlusIcon data-icon="inline-start" />
-                  Create VLAN
+                  Add VLAN
                 </Button>
               </EmptyContent>
             </Empty>
