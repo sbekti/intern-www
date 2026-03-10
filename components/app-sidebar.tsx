@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/sidebar"
 import {
   HouseIcon,
+  MonitorSmartphoneIcon,
   NetworkIcon,
-  SmartphoneNfcIcon,
-  WaypointsIcon,
+  ServerIcon,
 } from "lucide-react"
 
 const data = {
@@ -30,7 +30,7 @@ const data = {
     {
       title: "Devices",
       url: "/networks/devices",
-      icon: <SmartphoneNfcIcon />,
+      icon: <MonitorSmartphoneIcon />,
     },
     {
       title: "VLANs",
@@ -61,7 +61,7 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/" />}
             >
-              <WaypointsIcon className="size-5!" />
+              <ServerIcon className="size-5!" />
               <span className="text-base font-semibold">Intern</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
