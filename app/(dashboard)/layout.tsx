@@ -3,12 +3,19 @@ import type { ReactNode } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { getProfile } from "@/lib/api"
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
+  const profile = await getProfile()
+
+  if (!profile.ok) {
+    throw new Error("Required authenticated profile unavailable for dashboard shell.")
+  }
+
   return (
     <SidebarProvider
       style={
@@ -18,7 +25,14 @@ export default function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar
+        variant="inset"
+        user={{
+          name: profile.data.name,
+          email: profile.data.email,
+          avatar: "",
+        }}
+      />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

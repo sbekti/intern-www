@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
 
 import { NavMain } from "@/components/nav-main"
@@ -22,11 +21,6 @@ import {
 } from "lucide-react"
 
 const data = {
-  user: {
-    name: "Authenticated User",
-    email: "user@example.com",
-    avatar: "",
-  },
   navMain: [
     {
       title: "Home",
@@ -46,7 +40,18 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type SidebarUser = {
+  name: string
+  email: string
+  avatar: string
+}
+
+export function AppSidebar({
+  user,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  user: SidebarUser
+}) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -66,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
