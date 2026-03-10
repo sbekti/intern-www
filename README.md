@@ -16,6 +16,26 @@ npm install
 npm run dev
 ```
 
+For the full local stack with the required backend:
+
+```bash
+npm run dev:user
+```
+
+Admin-mode frontend against the admin proxy:
+
+```bash
+npm run dev:admin
+```
+
+Useful helper commands:
+
+```bash
+npm run backend:up
+npm run backend:logs
+npm run backend:down
+```
+
 ## Adding components
 
 Use the shadcn CLI with the project-local package manager:
