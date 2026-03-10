@@ -18,7 +18,14 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -201,17 +208,19 @@ export function DeviceManager({
   return (
     <>
       <Card className="border-border/70 shadow-xs">
-        <CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
+        <CardHeader>
+          <div className="flex flex-col gap-1">
             <CardTitle>Devices</CardTitle>
             <CardDescription>
               Register devices and assign each MAC address to the correct VLAN.
             </CardDescription>
           </div>
-          <Button onClick={openCreate} disabled={sortedVlans.length === 0}>
-            <PlusIcon data-icon="inline-start" />
-            Add Device
-          </Button>
+          <CardAction>
+            <Button size="sm" onClick={openCreate} disabled={sortedVlans.length === 0}>
+              <PlusIcon data-icon="inline-start" />
+              Add Device
+            </Button>
+          </CardAction>
         </CardHeader>
         <CardContent>
           {sortedVlans.length === 0 ? (
