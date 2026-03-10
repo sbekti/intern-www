@@ -59,7 +59,7 @@ function isAllowedStatus(status: number): status is AllowedStatus {
   return status === 401 || status === 403 || status === 404
 }
 
-async function resolveApiBaseUrl() {
+export async function resolveApiBaseUrl() {
   if (process.env.INTERN_API_BASE_URL) {
     return process.env.INTERN_API_BASE_URL.replace(/\/$/, "")
   }
@@ -81,7 +81,7 @@ async function resolveApiBaseUrl() {
   return `${proto}://${host}`
 }
 
-async function buildForwardHeaders() {
+export async function buildForwardHeaders() {
   const requestHeaders = await headers()
   const outbound = new Headers()
 
