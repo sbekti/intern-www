@@ -1,13 +1,31 @@
 # intern-www
 
-Clean-room frontend for an internal site such as `intern.corp.example.com`.
+Next.js frontend for the internal network and homelab dashboard.
 
-Status: scaffold only.
+Current bootstrap:
+- Next.js 16 App Router
+- `shadcn/ui` v4 with `base-nova`
+- Base UI primitives
 
-Planned responsibilities:
+## Development
 
-- Next.js App Router admin dashboard
-- `shadcn/ui`-based interface
-- same-origin browser client for `intern-api`
+Install dependencies and start the dev server:
 
-This repo is public-safe by design. Do not commit secrets.
+```bash
+npm install
+npm run dev
+```
+
+## Adding components
+
+Use the shadcn CLI with the project-local package manager:
+
+```bash
+npx shadcn@latest add button
+```
+
+Components are written into [`components/ui`](./components/ui).
+
+```tsx
+import { Button } from "@/components/ui/button";
+```
