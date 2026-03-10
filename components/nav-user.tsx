@@ -27,7 +27,6 @@ import {
   EllipsisVerticalIcon,
   KeyRoundIcon,
   LogOutIcon,
-  ShieldCheckIcon,
 } from "lucide-react"
 
 export function NavUser({
@@ -94,11 +93,6 @@ export function NavUser({
                 <KeyRoundIcon
                 />
                 Security
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ShieldCheckIcon
-                />
-                Forward auth only
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

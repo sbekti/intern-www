@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -16,12 +15,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
-  BadgeInfoIcon,
   CommandIcon,
   LayoutDashboardIcon,
-  LockKeyholeIcon,
   NetworkIcon,
-  ShieldIcon,
   SmartphoneNfcIcon,
 } from "lucide-react"
 
@@ -38,31 +34,14 @@ const data = {
       icon: <LayoutDashboardIcon />,
     },
     {
-      title: "Profile",
-      url: "/profile",
-      icon: <ShieldIcon />,
-    },
-    {
-      title: "VLANs",
-      url: "/networks/vlans",
-      icon: <NetworkIcon />,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Security",
-      url: "/profile/security",
-      icon: <LockKeyholeIcon />,
-    },
-    {
       title: "Devices",
       url: "/networks/devices",
       icon: <SmartphoneNfcIcon />,
     },
     {
-      title: "Device Login",
-      url: "/auth/device",
-      icon: <BadgeInfoIcon />,
+      title: "VLANs",
+      url: "/networks/vlans",
+      icon: <NetworkIcon />,
     },
   ],
 }
@@ -85,7 +64,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
