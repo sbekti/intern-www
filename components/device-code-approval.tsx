@@ -130,6 +130,7 @@ export function DeviceCodeApproval({
                     id="device-user-code"
                     maxLength={8}
                     value={userCode}
+                    pasteTransformer={normalizeUserCode}
                     onChange={(value) => {
                       setUserCode(normalizeUserCode(value))
                       if (submitError) {
