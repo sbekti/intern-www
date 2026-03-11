@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { startTransition } from "react"
 import {
   ChevronLeftIcon,
@@ -9,13 +10,8 @@ import {
   ChevronsRightIcon,
 } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination"
 import {
   Select,
   SelectContent,
@@ -120,62 +116,70 @@ export function AuditLogPagination({
         Page {currentPage} of {totalPages}
       </p>
 
-      <Pagination className="mx-0 w-auto">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationLink
-              href={
-                hasPrevious
-                  ? buildQuery({ ...baseQuery, limit, offset: 0 })
-                  : buildQuery({ ...baseQuery, limit, offset })
-              }
-              aria-label="Go to first page"
-              className={!hasPrevious ? "pointer-events-none opacity-50" : undefined}
-            >
-              <ChevronsLeftIcon />
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              href={
-                hasPrevious
-                  ? buildQuery({ ...baseQuery, limit, offset: previousOffset })
-                  : buildQuery({ ...baseQuery, limit, offset })
-              }
-              aria-label="Go to previous page"
-              className={!hasPrevious ? "pointer-events-none opacity-50" : undefined}
-            >
-              <ChevronLeftIcon />
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              href={
-                hasNext
-                  ? buildQuery({ ...baseQuery, limit, offset: nextOffset })
-                  : buildQuery({ ...baseQuery, limit, offset })
-              }
-              aria-label="Go to next page"
-              className={!hasNext ? "pointer-events-none opacity-50" : undefined}
-            >
-              <ChevronRightIcon />
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              href={
-                hasNext
-                  ? buildQuery({ ...baseQuery, limit, offset: lastOffset })
-                  : buildQuery({ ...baseQuery, limit, offset })
-              }
-              aria-label="Go to last page"
-              className={!hasNext ? "pointer-events-none opacity-50" : undefined}
-            >
-              <ChevronsRightIcon />
-            </PaginationLink>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          disabled={!hasPrevious}
+          nativeButton={hasPrevious ? false : true}
+          render={
+            hasPrevious ? (
+              <Link href={buildQuery({ ...baseQuery, limit, offset: 0 })} />
+            ) : undefined
+          }
+          aria-label="Go to first page"
+        >
+          <ChevronsLeftIcon />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          disabled={!hasPrevious}
+          nativeButton={hasPrevious ? false : true}
+          render={
+            hasPrevious ? (
+              <Link
+                href={buildQuery({ ...baseQuery, limit, offset: previousOffset })}
+              />
+            ) : undefined
+          }
+          aria-label="Go to previous page"
+        >
+          <ChevronLeftIcon />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          disabled={!hasNext}
+          nativeButton={hasNext ? false : true}
+          render={
+            hasNext ? (
+              <Link href={buildQuery({ ...baseQuery, limit, offset: nextOffset })} />
+            ) : undefined
+          }
+          aria-label="Go to next page"
+        >
+          <ChevronRightIcon />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          disabled={!hasNext}
+          nativeButton={hasNext ? false : true}
+          render={
+            hasNext ? (
+              <Link href={buildQuery({ ...baseQuery, limit, offset: lastOffset })} />
+            ) : undefined
+          }
+          aria-label="Go to last page"
+        >
+          <ChevronsRightIcon />
+        </Button>
+      </div>
     </div>
   )
 }
