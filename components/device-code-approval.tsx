@@ -5,12 +5,13 @@ import { CheckCircle2Icon, ShieldBanIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Empty,
   EmptyContent,
@@ -26,7 +27,12 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 type ApprovalState = "idle" | "approved" | "denied"
 
@@ -36,7 +42,17 @@ type ApiError = {
 }
 
 function normalizeUserCode(value: string) {
-  return value.trim().toUpperCase()
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8)
+}
+
+function formatUserCode(value: string) {
+  const normalized = normalizeUserCode(value)
+
+  if (normalized.length <= 4) {
+    return normalized
+  }
+
+  return `${normalized.slice(0, 4)}-${normalized.slice(4)}`
 }
 
 async function parseApiError(response: Response) {
@@ -53,23 +69,25 @@ export function DeviceCodeApproval({
 }: {
   initialUserCode: string
 }) {
-  const [userCode, setUserCode] = useState(initialUserCode)
+  const [userCode, setUserCode] = useState(normalizeUserCode(initialUserCode))
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [approvalState, setApprovalState] = useState<ApprovalState>("idle")
   const [busyAction, setBusyAction] = useState<"approve" | "deny" | null>(null)
 
   async function submit(action: "approve" | "deny") {
     const normalizedUserCode = normalizeUserCode(userCode)
-    if (!normalizedUserCode) {
-      setSubmitError("Enter the device approval code.")
+    if (normalizedUserCode.length !== 8) {
+      setSubmitError("Enter the full 8-character device approval code.")
       return
     }
+
+    const formattedUserCode = formatUserCode(normalizedUserCode)
 
     setBusyAction(action)
     setSubmitError(null)
 
     const response = await fetch(
-      `/api/v1/auth/device_codes/${encodeURIComponent(normalizedUserCode)}/${action}`,
+      `/api/v1/auth/device_codes/${encodeURIComponent(formattedUserCode)}/${action}`,
       {
         method: "POST",
       }
@@ -86,94 +104,127 @@ export function DeviceCodeApproval({
     setBusyAction(null)
   }
 
-  if (approvalState !== "idle") {
-    const approved = approvalState === "approved"
-
-    return (
-      <div className="px-4 lg:px-6">
-        <Empty className="min-h-[24rem] border bg-card shadow-xs">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              {approved ? <CheckCircle2Icon /> : <ShieldBanIcon />}
-            </EmptyMedia>
-            <EmptyTitle>
-              {approved ? "Device code approved" : "Device code denied"}
-            </EmptyTitle>
-            <EmptyDescription>
-              {approved
-                ? `The login request for ${userCode} can now complete on the client device.`
-                : `The login request for ${userCode} has been denied.`}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setApprovalState("idle")
-                setSubmitError(null)
+  return (
+    <Dialog open onOpenChange={() => {}}>
+      <DialogContent showCloseButton={false} className="sm:max-w-lg">
+        {approvalState === "idle" ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Device Approval</DialogTitle>
+              <DialogDescription>
+                Approve or deny a pending login request from the displayed user
+                code.
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              className="grid gap-6"
+              onSubmit={(event) => {
+                event.preventDefault()
+                void submit("approve")
               }}
             >
-              Review another code
-            </Button>
-          </EmptyContent>
-        </Empty>
-      </div>
-    )
-  }
-
-  return (
-    <div className="grid gap-4 px-4 lg:px-6">
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Device Approval</CardTitle>
-          <CardDescription>
-            Approve or deny a pending login request from the displayed user
-            code.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            className="grid gap-6"
-            onSubmit={(event) => {
-              event.preventDefault()
-              void submit("approve")
-            }}
-          >
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="device-user-code">User code</FieldLabel>
-                <Input
-                  id="device-user-code"
-                  value={userCode}
-                  onChange={(event) => setUserCode(event.target.value)}
-                  autoCapitalize="characters"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  placeholder="ABCD-EFGH"
-                  required
-                />
-                <FieldDescription>
-                  Paste the code shown by the client login flow.
-                </FieldDescription>
-              </Field>
-              <FieldError>{submitError}</FieldError>
-            </FieldGroup>
-            <div className="flex flex-wrap gap-2">
-              <Button type="submit" disabled={busyAction !== null}>
-                {busyAction === "approve" ? "Approving..." : "Approve"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busyAction !== null}
-                onClick={() => void submit("deny")}
-              >
-                {busyAction === "deny" ? "Denying..." : "Deny"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="device-user-code">User code</FieldLabel>
+                  <InputOTP
+                    id="device-user-code"
+                    maxLength={8}
+                    value={userCode}
+                    onChange={(value) => {
+                      setUserCode(normalizeUserCode(value))
+                      if (submitError) {
+                        setSubmitError(null)
+                      }
+                    }}
+                    containerClassName="justify-center"
+                    autoFocus
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                      <InputOTPSlot index={6} />
+                      <InputOTPSlot index={7} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                  <FieldDescription>
+                    Paste the full code into the first box or type it manually.
+                  </FieldDescription>
+                </Field>
+                <FieldError>{submitError}</FieldError>
+              </FieldGroup>
+              <DialogFooter className="sm:justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={busyAction !== null}
+                  onClick={() => void submit("deny")}
+                >
+                  {busyAction === "deny" ? "Denying..." : "Deny"}
+                </Button>
+                <Button type="submit" disabled={busyAction !== null}>
+                  {busyAction === "approve" ? "Approving..." : "Approve"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>
+                {approvalState === "approved"
+                  ? "Device code approved"
+                  : "Device code denied"}
+              </DialogTitle>
+              <DialogDescription>
+                {approvalState === "approved"
+                  ? "The client device can now complete login."
+                  : "The client device login request has been denied."}
+              </DialogDescription>
+            </DialogHeader>
+            <Empty className="min-h-[16rem] border bg-card shadow-xs">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  {approvalState === "approved" ? (
+                    <CheckCircle2Icon />
+                  ) : (
+                    <ShieldBanIcon />
+                  )}
+                </EmptyMedia>
+                <EmptyTitle>
+                  {approvalState === "approved"
+                    ? "Approval recorded"
+                    : "Denial recorded"}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {approvalState === "approved"
+                    ? `The login request for ${formatUserCode(userCode)} can continue on the client device.`
+                    : `The login request for ${formatUserCode(userCode)} has been denied.`}
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setApprovalState("idle")
+                    setSubmitError(null)
+                    setBusyAction(null)
+                    setUserCode("")
+                  }}
+                >
+                  Review another code
+                </Button>
+              </EmptyContent>
+            </Empty>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
