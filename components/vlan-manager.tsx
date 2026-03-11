@@ -325,6 +325,7 @@ export function VlanManager({
               </Field>
               <Field orientation="horizontal">
                 <Checkbox
+                  id="vlan-active"
                   checked={form.is_active}
                   onCheckedChange={(checked) =>
                     setForm((current) => ({
@@ -334,7 +335,7 @@ export function VlanManager({
                   }
                 />
                 <FieldContent>
-                  <FieldLabel>Active</FieldLabel>
+                  <FieldLabel htmlFor="vlan-active">Active</FieldLabel>
                   <FieldDescription>
                     Inactive VLANs stay in the database but should not be used
                     for new assignments.
