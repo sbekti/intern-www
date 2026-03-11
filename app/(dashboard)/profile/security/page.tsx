@@ -29,6 +29,7 @@ export default async function ProfileSecurityPage() {
         </CardHeader>
         <CardContent>
           <Button
+            nativeButton={false}
             render={
               <a
                 href={passwordSettingsUrl}
