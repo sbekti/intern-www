@@ -17,11 +17,25 @@ import {
   HouseIcon,
   MonitorSmartphoneIcon,
   NetworkIcon,
+  ScrollTextIcon,
   ServerIcon,
 } from "lucide-react"
 
-const data = {
-  navMain: [
+type SidebarUser = {
+  name: string
+  email: string
+  avatar: string
+}
+
+export function AppSidebar({
+  user,
+  isAdmin,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  user: SidebarUser
+  isAdmin: boolean
+}) {
+  const navMain = [
     {
       title: "Home",
       url: "/",
@@ -37,21 +51,17 @@ const data = {
       url: "/networks/vlans",
       icon: <NetworkIcon />,
     },
-  ],
-}
+    ...(isAdmin
+      ? [
+          {
+            title: "Audit Logs",
+            url: "/admin/audit-logs",
+            icon: <ScrollTextIcon />,
+          },
+        ]
+      : []),
+  ]
 
-type SidebarUser = {
-  name: string
-  email: string
-  avatar: string
-}
-
-export function AppSidebar({
-  user,
-  ...props
-}: React.ComponentProps<typeof Sidebar> & {
-  user: SidebarUser
-}) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -68,7 +78,7 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

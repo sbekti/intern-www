@@ -11,6 +11,7 @@ const titles: Record<string, string> = {
   "/profile/security": "Security",
   "/networks/vlans": "VLAN Management",
   "/networks/devices": "Device Management",
+  "/admin/audit-logs": "Audit Logs",
   "/auth/device": "Device Approval",
 }
 

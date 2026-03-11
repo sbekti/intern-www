@@ -32,6 +32,7 @@ export default async function DashboardLayout({
           email: profile.data.email,
           avatar: "",
         }}
+        isAdmin={profile.data.is_admin}
       />
       <SidebarInset>
         <SiteHeader />

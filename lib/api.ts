@@ -60,6 +60,25 @@ export type AuthSession = {
   expires_at: string
 }
 
+export type AuditLogEntry = {
+  id: string
+  actor_username: string
+  action: string
+  resource_type: string
+  resource_id: string
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+export type AuditLogPage = {
+  items: AuditLogEntry[]
+  pagination: {
+    limit: number
+    offset: number
+    total: number
+  }
+}
+
 export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 401 | 403 | 404 }
@@ -174,4 +193,26 @@ export function listDevices() {
 
 export function listProfileSessions() {
   return getJson<{ items: AuthSession[] }>("/api/v1/profile/sessions")
+}
+
+export function listAdminAuditLogs(filters: {
+  action?: string
+  resource_type?: string
+  resource_id?: string
+  actor_username?: string
+  limit?: number
+  offset?: number
+}) {
+  const query = new URLSearchParams()
+
+  for (const [key, rawValue] of Object.entries(filters)) {
+    if (rawValue === undefined || rawValue === null || rawValue === "") {
+      continue
+    }
+
+    query.set(key, String(rawValue))
+  }
+
+  const suffix = query.size > 0 ? `?${query.toString()}` : ""
+  return getJson<AuditLogPage>(`/api/v1/admin/audit_logs${suffix}`)
 }
