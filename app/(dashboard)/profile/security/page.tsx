@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, KeyRoundIcon, ShieldIcon } from "lucide-react"
+import { ArrowUpRightIcon } from "lucide-react"
 
 import { UnauthorizedState } from "@/components/api-state"
 import { SecuritySessions } from "@/components/security-sessions"
@@ -19,10 +19,7 @@ export default async function ProfileSecurityPage() {
     <div className="grid gap-4 px-4 lg:px-6">
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <KeyRoundIcon />
-            <CardTitle>Password</CardTitle>
-          </div>
+          <CardTitle>Password</CardTitle>
           <CardDescription>
             Password changes are handled by the central SSO settings page.
           </CardDescription>
@@ -46,10 +43,7 @@ export default async function ProfileSecurityPage() {
 
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <ShieldIcon />
-            <CardTitle>Client Sessions</CardTitle>
-          </div>
+          <CardTitle>Client Sessions</CardTitle>
           <CardDescription>
             Active public-client sessions such as `internctl`. Your browser SSO
             session is not listed here.
