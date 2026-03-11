@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "dev:user": "./scripts/dev-user.sh",
     "dev:admin": "./scripts/dev-admin.sh",
     "backend:up": "../intern-api/scripts/dev-up.sh",
