@@ -51,15 +51,6 @@ export function AppSidebar({
       url: "/networks/vlans",
       icon: <NetworkIcon />,
     },
-    ...(isAdmin
-      ? [
-          {
-            title: "Audit Logs",
-            url: "/admin/audit-logs",
-            icon: <ScrollTextIcon />,
-          },
-        ]
-      : []),
   ]
 
   return (
@@ -81,6 +72,16 @@ export function AppSidebar({
         <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
+        {isAdmin ? (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton render={<Link href="/admin/audit-logs" />}>
+                <ScrollTextIcon />
+                <span>Audit Logs</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : null}
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
