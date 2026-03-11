@@ -148,6 +148,7 @@ export function DeviceManager({
 
     const payload = editing
       ? {
+          mac_address: form.mac_address.trim(),
           display_name: form.display_name.trim(),
           vlan_id: Number(form.vlan_id),
         }
@@ -305,7 +306,7 @@ export function DeviceManager({
             <DialogTitle>{editing ? "Edit device" : "Create device"}</DialogTitle>
             <DialogDescription>
               {editing
-                ? "Update the device name or VLAN assignment."
+                ? "Update the device name, MAC address, or VLAN assignment."
                 : "Register a MAC address and attach it to a VLAN."}
             </DialogDescription>
           </DialogHeader>
