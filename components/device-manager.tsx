@@ -336,13 +336,10 @@ export function DeviceManager({
                       mac_address: event.target.value,
                     }))
                   }
-                  disabled={Boolean(editing)}
-                  required={!editing}
+                  required
                 />
                 <FieldDescription>
-                  {editing
-                    ? "MAC addresses are immutable after registration."
-                    : "Accepted formats include colon, hyphen, dotted, or bare hexadecimal."}
+                  Accepted formats include colon, hyphen, dotted, or bare hexadecimal.
                 </FieldDescription>
               </Field>
               <Field>
