@@ -56,9 +56,36 @@ function formatUserCode(value: string) {
 }
 
 async function parseApiError(response: Response) {
+  let body: ApiError | null = null
+
   try {
-    const body = (await response.json()) as ApiError
-    return body.message ?? `${response.status} ${response.statusText}`
+    body = (await response.json()) as ApiError
+  } catch {
+    body = null
+  }
+
+  if (response.status === 404) {
+    return "No pending login request was found for that code. Check the code or start the login flow again on the client to get a new one."
+  }
+
+  if (response.status === 409) {
+    return "This code is no longer pending. It may already be approved, denied, exchanged, or expired. Start the login flow again on the client for a new code."
+  }
+
+  if (response.status === 401) {
+    return "You need an authenticated browser session to approve or deny a device login request."
+  }
+
+  if (response.status === 400 && body?.message === "user_code must not be empty") {
+    return "Enter the full 8-character device approval code."
+  }
+
+  if (body?.message) {
+    return body.message
+  }
+
+  try {
+    return `${response.status} ${response.statusText}`
   } catch {
     return `${response.status} ${response.statusText}`
   }
