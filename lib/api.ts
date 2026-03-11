@@ -49,6 +49,17 @@ export type NetworkDevice = {
   updated_at: string
 }
 
+export type AuthSession = {
+  id: string
+  username: string
+  client_name: string
+  is_current: boolean
+  created_at: string
+  last_used_at?: string
+  idle_expires_at: string
+  expires_at: string
+}
+
 export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 401 | 403 | 404 }
@@ -159,4 +170,8 @@ export function listVlans() {
 
 export function listDevices() {
   return getJson<{ items: NetworkDevice[] }>("/api/v1/networks/devices")
+}
+
+export function listProfileSessions() {
+  return getJson<{ items: AuthSession[] }>("/api/v1/profile/sessions")
 }
