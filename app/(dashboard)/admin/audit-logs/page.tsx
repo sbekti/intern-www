@@ -2,7 +2,14 @@ import Link from "next/link"
 
 import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -132,7 +139,7 @@ export default async function AuditLogsPage({
         </CardHeader>
         <CardContent>
           <form action="/admin/audit-logs" className="flex flex-col gap-6">
-            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Field>
                 <FieldLabel htmlFor="action">Action</FieldLabel>
                 <Input id="action" name="action" defaultValue={action} />
@@ -161,19 +168,8 @@ export default async function AuditLogsPage({
                   defaultValue={actorUsername}
                 />
               </Field>
-              <Field>
-                <FieldLabel htmlFor="limit">Page Size</FieldLabel>
-                <Input
-                  id="limit"
-                  name="limit"
-                  type="number"
-                  min={allowedPageSizes[0]}
-                  max={allowedPageSizes[allowedPageSizes.length - 1]}
-                  step={25}
-                  defaultValue={String(limit)}
-                />
-              </Field>
             </FieldGroup>
+            <input type="hidden" name="limit" value={String(limit)} />
             <div className="flex items-center gap-2">
               <Button type="submit" size="sm">
                 Apply Filters
@@ -193,10 +189,38 @@ export default async function AuditLogsPage({
 
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
-          <CardTitle>Audit Stream</CardTitle>
-          <CardDescription>
-            Showing {pageStart}-{pageEnd} of {page.pagination.total} entries.
-          </CardDescription>
+          <div className="flex flex-col gap-1">
+            <CardTitle>Audit Stream</CardTitle>
+            <CardDescription>
+              Showing {pageStart}-{pageEnd} of {page.pagination.total} entries.
+            </CardDescription>
+          </div>
+          <CardAction>
+            <form action="/admin/audit-logs" className="flex items-end gap-2">
+              <input type="hidden" name="action" value={action} />
+              <input type="hidden" name="resource_type" value={resourceType} />
+              <input type="hidden" name="resource_id" value={resourceId} />
+              <input type="hidden" name="actor_username" value={actorUsername} />
+              <Field className="min-w-32">
+                <FieldLabel htmlFor="audit-page-size">Page Size</FieldLabel>
+                <select
+                  id="audit-page-size"
+                  name="limit"
+                  defaultValue={String(limit)}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50"
+                >
+                  {allowedPageSizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Button type="submit" size="sm" variant="outline">
+                Update
+              </Button>
+            </form>
+          </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <Table>
