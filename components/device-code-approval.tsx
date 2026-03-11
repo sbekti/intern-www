@@ -187,7 +187,7 @@ export function DeviceCodeApproval({
                 </Field>
                 <FieldError>{submitError}</FieldError>
               </FieldGroup>
-              <DialogFooter className="sm:justify-between">
+              <DialogFooter>
                 <Button
                   type="button"
                   variant="outline"
