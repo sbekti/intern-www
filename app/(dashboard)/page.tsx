@@ -1,4 +1,4 @@
-import { CloudSunIcon, NetworkIcon } from "lucide-react"
+import { CloudSunIcon } from "lucide-react"
 
 import { UnauthorizedState } from "@/components/api-state"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -51,32 +51,6 @@ export default async function HomePage() {
             {dashboard.data.welcome_message}
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-sm leading-6 text-muted-foreground">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border bg-muted/30 p-4">
-              <p className="text-sm font-medium text-foreground">
-                Signed in as {dashboard.data.profile.name}
-              </p>
-              <p className="mt-1 text-sm">{dashboard.data.profile.email}</p>
-              <p className="mt-3 text-sm">
-                Username: {dashboard.data.profile.username}
-              </p>
-            </div>
-            <div className="rounded-xl border bg-muted/30 p-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <NetworkIcon />
-                Network summary
-              </div>
-              <p className="mt-2 text-sm">
-                {dashboard.data.network_summary.device_count} devices across{" "}
-                {dashboard.data.network_summary.vlan_count} VLANs
-              </p>
-              <p className="mt-3 text-sm">
-                Admin access: {dashboard.data.profile.is_admin ? "yes" : "no"}
-              </p>
-            </div>
-          </div>
-        </CardContent>
       </Card>
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
