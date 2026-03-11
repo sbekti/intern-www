@@ -1,10 +1,15 @@
-import { PagePlaceholder } from "@/components/page-placeholder"
+import { DeviceCodeApproval } from "@/components/device-code-approval"
 
-export default function DeviceAuthPage() {
+export default async function DeviceAuthPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    user_code?: string
+  }>
+}) {
+  const params = await searchParams
+
   return (
-    <PagePlaceholder
-      title="Device Approval"
-      description="This route will approve or deny pending device-code login requests for desktop and future mobile clients."
-    />
+    <DeviceCodeApproval initialUserCode={params.user_code?.trim() ?? ""} />
   )
 }
