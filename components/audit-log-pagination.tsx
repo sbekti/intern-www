@@ -112,14 +112,15 @@ export function AuditLogPagination({
         </Select>
       </Field>
 
-      <div className="ml-auto flex items-center gap-4">
-        <div className="flex w-fit items-center justify-center text-sm font-medium">
-          Page {currentPage} of {totalPages}
-        </div>
+      <div className="flex w-fit items-center justify-center text-sm font-medium">
+        Page {currentPage} of {totalPages}
+      </div>
+
+      <div className="ml-auto flex items-center gap-2 lg:ml-0">
         <Button
           variant="outline"
+          className="hidden size-8 lg:flex"
           size="icon"
-          className="size-8"
           disabled={!hasPrevious}
           nativeButton={hasPrevious ? false : true}
           render={
@@ -133,8 +134,8 @@ export function AuditLogPagination({
         </Button>
         <Button
           variant="outline"
-          size="icon"
           className="size-8"
+          size="icon"
           disabled={!hasPrevious}
           nativeButton={hasPrevious ? false : true}
           render={
@@ -150,8 +151,8 @@ export function AuditLogPagination({
         </Button>
         <Button
           variant="outline"
-          size="icon"
           className="size-8"
+          size="icon"
           disabled={!hasNext}
           nativeButton={hasNext ? false : true}
           render={
@@ -165,8 +166,8 @@ export function AuditLogPagination({
         </Button>
         <Button
           variant="outline"
+          className="hidden size-8 lg:flex"
           size="icon"
-          className="size-8"
           disabled={!hasNext}
           nativeButton={hasNext ? false : true}
           render={
