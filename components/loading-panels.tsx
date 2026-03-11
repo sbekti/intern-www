@@ -7,25 +7,19 @@ export function HomeLoadingPanel() {
       <Card className="border-border/70 shadow-xs">
         <CardHeader className="gap-2">
           <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-full max-w-xl" />
+          <Skeleton className="h-4 w-full max-w-xs" />
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-28 w-full rounded-xl" />
-          </div>
-        </CardContent>
       </Card>
       <Card className="border-border/70 shadow-xs">
         <CardHeader className="gap-2">
           <Skeleton className="h-6 w-28" />
-          <Skeleton className="h-4 w-full max-w-sm" />
+          <Skeleton className="h-4 w-full max-w-xs" />
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-3">
-            <Skeleton className="h-24 w-full rounded-xl" />
-            <Skeleton className="h-24 w-full rounded-xl" />
-            <Skeleton className="h-24 w-full rounded-xl" />
+            <Skeleton className="h-28 w-full rounded-xl" />
+            <Skeleton className="h-28 w-full rounded-xl" />
+            <Skeleton className="h-28 w-full rounded-xl" />
           </div>
         </CardContent>
       </Card>
@@ -38,8 +32,8 @@ export function ProfileLoadingPanel() {
     <div className="grid gap-4 px-4 lg:px-6">
       <Card className="border-border/70 shadow-xs">
         <CardHeader className="gap-2">
-          <Skeleton className="h-6 w-44" />
-          <Skeleton className="h-4 w-56" />
+          <Skeleton className="h-6 w-36" />
+          <Skeleton className="h-4 w-48" />
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -57,6 +51,94 @@ export function ProfileLoadingPanel() {
           <Skeleton className="h-5 w-24 rounded-full" />
           <Skeleton className="h-5 w-32 rounded-full" />
           <Skeleton className="h-5 w-28 rounded-full" />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export function SecurityLoadingPanel() {
+  return (
+    <div className="grid gap-4 px-4 lg:px-6">
+      <Card className="border-border/70 shadow-xs">
+        <CardHeader className="gap-2">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-4 w-full max-w-sm" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-9 w-52 rounded-md" />
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/70 shadow-xs">
+        <CardHeader className="gap-2">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-4 w-full max-w-lg" />
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          <Skeleton className="h-18 w-full rounded-xl" />
+          <Skeleton className="h-18 w-full rounded-xl" />
+          <Skeleton className="h-18 w-full rounded-xl" />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export function AuditLogsLoadingPanel() {
+  return (
+    <div className="grid gap-4 px-4 lg:px-6">
+      <Card className="border-border/70 shadow-xs">
+        <CardHeader className="gap-2">
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-4 w-full max-w-md" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Skeleton className="h-9 w-full rounded-md" />
+            <Skeleton className="h-9 w-full rounded-md" />
+            <Skeleton className="h-9 w-full rounded-md" />
+            <Skeleton className="h-9 w-full rounded-md" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/70 shadow-xs">
+        <CardHeader className="gap-2">
+          <Skeleton className="h-6 w-28" />
+          <Skeleton className="h-4 w-full max-w-sm" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-0">
+            <div className="grid grid-cols-5 gap-4 px-6 py-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <div className="grid grid-cols-5 gap-4 border-b px-6 py-4">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+            <div className="grid grid-cols-5 gap-4 border-b px-6 py-4">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+            <div className="grid grid-cols-5 gap-4 px-6 py-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-18" />
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
