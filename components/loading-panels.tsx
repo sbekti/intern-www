@@ -76,14 +76,12 @@ export function TableLoadingPanel({
           <Skeleton className="h-4 w-64" />
         </CardHeader>
         <CardContent>
-          <div className="overflow-hidden rounded-xl border">
-            <div className="border-b bg-muted/40 px-6 py-3">
-              <div className="grid grid-cols-4 gap-4">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-4 w-28" />
-                <Skeleton className="h-4 w-16" />
-              </div>
+          <div className="grid gap-0">
+            <div className="grid grid-cols-4 gap-4 px-6 py-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-4 w-16" />
             </div>
             <div className="grid gap-0">
               <div className="grid grid-cols-4 gap-4 border-b px-6 py-4">
