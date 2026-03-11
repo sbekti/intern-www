@@ -81,7 +81,7 @@ export function AuditLogPagination({
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center">
       <Field orientation="horizontal" className="w-fit items-center gap-3">
         <FieldLabel htmlFor="audit-page-size">Rows per page</FieldLabel>
         <Select
@@ -112,7 +112,7 @@ export function AuditLogPagination({
         </Select>
       </Field>
 
-      <div className="flex w-fit items-center justify-center text-sm font-medium">
+      <div className="md:ml-auto flex w-fit items-center justify-center text-sm font-medium">
         Page {currentPage} of {totalPages}
       </div>
 
