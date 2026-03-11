@@ -112,11 +112,10 @@ export function AuditLogPagination({
         </Select>
       </Field>
 
-      <p className="text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
-      </p>
-
-      <div className="flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-4">
+        <div className="flex w-fit items-center justify-center text-sm font-medium">
+          Page {currentPage} of {totalPages}
+        </div>
         <Button
           variant="outline"
           size="icon"
