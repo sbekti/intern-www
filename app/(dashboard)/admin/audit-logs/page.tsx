@@ -1,12 +1,13 @@
 import Link from "next/link"
 
+import { AuditLogPagination } from "@/components/audit-log-pagination"
 import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -113,20 +114,8 @@ export default async function AuditLogsPage({
   }
 
   const page = auditLogs.data
-  const previousOffset = Math.max(0, offset - page.pagination.limit)
-  const nextOffset = offset + page.pagination.limit
-  const hasPrevious = offset > 0
-  const hasNext = nextOffset < page.pagination.total
   const pageStart = page.pagination.total === 0 ? 0 : offset + 1
   const pageEnd = Math.min(offset + page.items.length, page.pagination.total)
-
-  const baseQuery = {
-    action,
-    resource_type: resourceType,
-    resource_id: resourceId,
-    actor_username: actorUsername,
-    limit,
-  }
 
   return (
     <div className="grid gap-4 px-4 lg:px-6">
@@ -189,40 +178,12 @@ export default async function AuditLogsPage({
 
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
-          <div className="flex flex-col gap-1">
-            <CardTitle>Audit Stream</CardTitle>
-            <CardDescription>
-              Showing {pageStart}-{pageEnd} of {page.pagination.total} entries.
-            </CardDescription>
-          </div>
-          <CardAction>
-            <form action="/admin/audit-logs" className="flex items-end gap-2">
-              <input type="hidden" name="action" value={action} />
-              <input type="hidden" name="resource_type" value={resourceType} />
-              <input type="hidden" name="resource_id" value={resourceId} />
-              <input type="hidden" name="actor_username" value={actorUsername} />
-              <Field className="min-w-32">
-                <FieldLabel htmlFor="audit-page-size">Page Size</FieldLabel>
-                <select
-                  id="audit-page-size"
-                  name="limit"
-                  defaultValue={String(limit)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50"
-                >
-                  {allowedPageSizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Button type="submit" size="sm" variant="outline">
-                Update
-              </Button>
-            </form>
-          </CardAction>
+          <CardTitle>Audit Stream</CardTitle>
+          <CardDescription>
+            Showing {pageStart}-{pageEnd} of {page.pagination.total} entries.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
@@ -267,57 +228,19 @@ export default async function AuditLogsPage({
               )}
             </TableBody>
           </Table>
-
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground">
-              Page size {page.pagination.limit}, offset {page.pagination.offset}.
-            </p>
-            <div className="flex items-center gap-2">
-              {hasPrevious ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={
-                    <Link
-                      href={buildQuery({
-                        ...baseQuery,
-                        offset: previousOffset,
-                      })}
-                    />
-                  }
-                >
-                  Previous
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-              )}
-              {hasNext ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={
-                    <Link
-                      href={buildQuery({
-                        ...baseQuery,
-                        offset: nextOffset,
-                      })}
-                    />
-                  }
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" disabled>
-                  Next
-                </Button>
-              )}
-            </div>
-          </div>
         </CardContent>
+        <CardFooter>
+          <AuditLogPagination
+            action={action}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            actorUsername={actorUsername}
+            limit={page.pagination.limit}
+            offset={page.pagination.offset}
+            total={page.pagination.total}
+            pageSizes={allowedPageSizes}
+          />
+        </CardFooter>
       </Card>
     </div>
   )
