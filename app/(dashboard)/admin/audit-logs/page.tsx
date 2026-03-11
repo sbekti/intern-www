@@ -17,7 +17,8 @@ import { listAdminAuditLogs, type AuditLogEntry } from "@/lib/api"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-const pageSize = 25
+const defaultPageSize = 25
+const allowedPageSizes = [25, 50, 100, 200] as const
 
 function readParam(
   params: Record<string, string | string[] | undefined>,
@@ -36,6 +37,17 @@ function parseOffset(value: string) {
     return 0
   }
   return parsed
+}
+
+function parsePageSize(value: string) {
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed)) {
+    return defaultPageSize
+  }
+  if (allowedPageSizes.includes(parsed as (typeof allowedPageSizes)[number])) {
+    return parsed
+  }
+  return defaultPageSize
 }
 
 function formatTimestamp(value: string) {
@@ -73,6 +85,7 @@ export default async function AuditLogsPage({
   const resourceType = readParam(params, "resource_type")
   const resourceId = readParam(params, "resource_id")
   const actorUsername = readParam(params, "actor_username")
+  const limit = parsePageSize(readParam(params, "limit"))
   const offset = parseOffset(readParam(params, "offset"))
 
   const auditLogs = await listAdminAuditLogs({
@@ -80,7 +93,7 @@ export default async function AuditLogsPage({
     resource_type: resourceType,
     resource_id: resourceId,
     actor_username: actorUsername,
-    limit: pageSize,
+    limit,
     offset,
   })
 
@@ -105,6 +118,7 @@ export default async function AuditLogsPage({
     resource_type: resourceType,
     resource_id: resourceId,
     actor_username: actorUsername,
+    limit,
   }
 
   return (
@@ -118,7 +132,7 @@ export default async function AuditLogsPage({
         </CardHeader>
         <CardContent>
           <form action="/admin/audit-logs" className="flex flex-col gap-6">
-            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
               <Field>
                 <FieldLabel htmlFor="action">Action</FieldLabel>
                 <Input id="action" name="action" defaultValue={action} />
@@ -147,6 +161,18 @@ export default async function AuditLogsPage({
                   defaultValue={actorUsername}
                 />
               </Field>
+              <Field>
+                <FieldLabel htmlFor="limit">Page Size</FieldLabel>
+                <Input
+                  id="limit"
+                  name="limit"
+                  type="number"
+                  min={allowedPageSizes[0]}
+                  max={allowedPageSizes[allowedPageSizes.length - 1]}
+                  step={25}
+                  defaultValue={String(limit)}
+                />
+              </Field>
             </FieldGroup>
             <div className="flex items-center gap-2">
               <Button type="submit" size="sm">
@@ -156,7 +182,7 @@ export default async function AuditLogsPage({
                 variant="outline"
                 size="sm"
                 nativeButton={false}
-                render={<Link href="/admin/audit-logs" />}
+                render={<Link href={buildQuery({ limit: defaultPageSize })} />}
               >
                 Clear
               </Button>
