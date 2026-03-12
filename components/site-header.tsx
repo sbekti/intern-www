@@ -6,11 +6,11 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 const titles: Record<string, string> = {
-  "/": "Overview",
+  "/": "Home",
   "/profile": "Profile",
   "/profile/security": "Security",
-  "/networks/vlans": "VLAN Management",
-  "/networks/devices": "Device Management",
+  "/networks/vlans": "VLANs",
+  "/networks/devices": "Devices",
   "/admin/audit-logs": "Audit Logs",
   "/auth/device": "Device Approval",
 }

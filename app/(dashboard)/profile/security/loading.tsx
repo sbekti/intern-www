@@ -1,5 +1,5 @@
-import { SecurityLoadingPanel } from "@/components/loading-panels"
+import { SecurityLoadingState } from "@/components/security-loading-state"
 
 export default function ProfileSecurityLoading() {
-  return <SecurityLoadingPanel />
+  return <SecurityLoadingState />
 }

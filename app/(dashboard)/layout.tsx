@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import { AppSidebar } from "@/components/app-sidebar"
+import { DashboardShellProvider } from "@/components/dashboard-shell-provider"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getProfile } from "@/lib/api"
@@ -25,23 +26,25 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar
-        variant="inset"
-        user={{
-          name: profile.data.name,
-          email: profile.data.email,
-          avatar: "",
-        }}
-        isAdmin={profile.data.is_admin}
-      />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-4 py-4 md:py-6">
-            {children}
+      <DashboardShellProvider isAdmin={profile.data.is_admin}>
+        <AppSidebar
+          variant="inset"
+          user={{
+            name: profile.data.name,
+            email: profile.data.email,
+            avatar: "",
+          }}
+          isAdmin={profile.data.is_admin}
+        />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-4 py-4 md:py-6">
+              {children}
+            </div>
           </div>
-        </div>
-      </SidebarInset>
+        </SidebarInset>
+      </DashboardShellProvider>
     </SidebarProvider>
   )
 }

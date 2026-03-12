@@ -1,20 +1,38 @@
 import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { DeviceManager } from "@/components/device-manager"
+import { TableLoadingPanel } from "@/components/loading-panels"
 import { listDevices, listVlans } from "@/lib/api"
+import { hasForcedGlimmer } from "@/lib/utils"
 
-export default async function DevicesPage() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export default async function DevicesPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const params = await searchParams
+
+  if (hasForcedGlimmer(params)) {
+    return <TableLoadingPanel titleWidth="w-20" />
+  }
+
   const [devices, vlans] = await Promise.all([listDevices(), listVlans()])
 
   if (!devices.ok) {
     if (devices.status === 403) {
-      return <ForbiddenState title="Device management unavailable" />
+      return <ForbiddenState />
     }
 
-    return <UnauthorizedState title="Device management unavailable" />
+    return <UnauthorizedState />
   }
 
   if (!vlans.ok) {
-    return <UnauthorizedState title="Device management unavailable" />
+    if (vlans.status === 403) {
+      return <ForbiddenState />
+    }
+
+    return <UnauthorizedState />
   }
 
   return (

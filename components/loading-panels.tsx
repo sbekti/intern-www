@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function HomeLoadingPanel() {
@@ -53,13 +53,6 @@ export function ProfileLoadingPanel() {
           <Skeleton className="h-5 w-28 rounded-full" />
         </CardContent>
       </Card>
-    </div>
-  )
-}
-
-export function SecurityLoadingPanel() {
-  return (
-    <div className="grid gap-4 px-4 lg:px-6">
       <Card className="border-border/70 shadow-xs">
         <CardHeader className="gap-2">
           <Skeleton className="h-6 w-24" />
@@ -69,6 +62,23 @@ export function SecurityLoadingPanel() {
           <Skeleton className="h-9 w-52 rounded-md" />
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+export function SecurityLoadingPanel({
+  isAdmin = false,
+}: {
+  isAdmin?: boolean
+}) {
+  return (
+    <div className="grid gap-4 px-4 lg:px-6">
+      {isAdmin ? (
+        <div className="flex items-center gap-3 px-1">
+          <Skeleton className="h-9 w-28 rounded-md" />
+          <Skeleton className="h-9 w-28 rounded-md" />
+        </div>
+      ) : null}
 
       <Card className="border-border/70 shadow-xs">
         <CardHeader className="gap-2">
@@ -80,6 +90,21 @@ export function SecurityLoadingPanel() {
           <Skeleton className="h-18 w-full rounded-xl" />
           <Skeleton className="h-18 w-full rounded-xl" />
         </CardContent>
+        {isAdmin ? (
+          <CardFooter className="flex w-full flex-col gap-4 md:flex-row md:items-center">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-9 w-20 rounded-md" />
+            </div>
+            <Skeleton className="h-4 w-24 md:ml-auto" />
+            <div className="ml-auto flex items-center gap-2 lg:ml-0">
+              <Skeleton className="hidden size-8 rounded-md lg:block" />
+              <Skeleton className="size-8 rounded-md" />
+              <Skeleton className="size-8 rounded-md" />
+              <Skeleton className="hidden size-8 rounded-md lg:block" />
+            </div>
+          </CardFooter>
+        ) : null}
       </Card>
     </div>
   )

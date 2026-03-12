@@ -1,13 +1,31 @@
+import { ArrowUpRightIcon } from "lucide-react"
+
 import { UnauthorizedState } from "@/components/api-state"
+import { ProfileLoadingPanel } from "@/components/loading-panels"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getProfile } from "@/lib/api"
+import { hasForcedGlimmer } from "@/lib/utils"
 
-export default async function ProfilePage() {
+const passwordSettingsUrl = "https://sso.corp.bekti.com/if/user/#/settings"
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const params = await searchParams
+
+  if (hasForcedGlimmer(params)) {
+    return <ProfileLoadingPanel />
+  }
+
   const profile = await getProfile()
 
   if (!profile.ok) {
-    return <UnauthorizedState title="Profile unavailable" />
+    return <UnauthorizedState />
   }
 
   return (
@@ -45,6 +63,29 @@ export default async function ProfilePage() {
               {group}
             </Badge>
           ))}
+        </CardContent>
+      </Card>
+      <Card className="border-border/70 shadow-xs">
+        <CardHeader>
+          <CardTitle>Password</CardTitle>
+          <CardDescription>
+            Password changes are handled by the central SSO settings page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            nativeButton={false}
+            render={
+              <a
+                href={passwordSettingsUrl}
+                target="_blank"
+                rel="noreferrer"
+              />
+            }
+          >
+            <ArrowUpRightIcon data-icon="inline-end" />
+            Open SSO Settings
+          </Button>
         </CardContent>
       </Card>
     </div>

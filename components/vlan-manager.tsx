@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { startTransition, useMemo, useState } from "react"
 import { toast } from "sonner"
-import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
+import { NetworkIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
 import type { Vlan } from "@/lib/api"
 import {
@@ -39,6 +39,7 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
 import {
@@ -203,6 +204,9 @@ export function VlanManager({
           {sortedItems.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <NetworkIcon />
+                </EmptyMedia>
                 <EmptyTitle>No VLANs</EmptyTitle>
                 <EmptyDescription>
                   Create the first VLAN definition to start assigning devices.

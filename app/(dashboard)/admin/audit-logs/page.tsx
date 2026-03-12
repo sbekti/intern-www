@@ -1,7 +1,16 @@
 import Link from "next/link"
+import { ScrollTextIcon } from "lucide-react"
 
 import { AuditLogPagination } from "@/components/audit-log-pagination"
 import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { AuditLogsLoadingPanel } from "@/components/loading-panels"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { listAdminAuditLogs, type AuditLogEntry } from "@/lib/api"
+import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
@@ -96,6 +106,10 @@ export default async function AuditLogsPage({
   const limit = parsePageSize(readParam(params, "limit"))
   const offset = parseOffset(readParam(params, "offset"))
 
+  if (hasForcedGlimmer(params)) {
+    return <AuditLogsLoadingPanel />
+  }
+
   const auditLogs = await listAdminAuditLogs({
     action,
     resource_type: resourceType,
@@ -107,10 +121,10 @@ export default async function AuditLogsPage({
 
   if (!auditLogs.ok) {
     if (auditLogs.status === 401) {
-      return <UnauthorizedState title="Audit logs unavailable" />
+      return <UnauthorizedState />
     }
 
-    return <ForbiddenState title="Audit logs require admin access" />
+    return <ForbiddenState />
   }
 
   const page = auditLogs.data
@@ -180,32 +194,37 @@ export default async function AuditLogsPage({
         <CardHeader>
           <CardTitle>Audit Stream</CardTitle>
           <CardDescription>
-            Showing {pageStart}-{pageEnd} of {page.pagination.total} entries.
+            {page.items.length === 0
+              ? "No audit logs matched the current filters."
+              : `Showing ${pageStart}-${pageEnd} of ${page.pagination.total} entries.`}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Actor</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Resource</TableHead>
-                <TableHead>Metadata</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {page.items.length === 0 ? (
+          {page.items.length === 0 ? (
+            <Empty className="min-h-[16rem] border bg-muted/20">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <ScrollTextIcon />
+                </EmptyMedia>
+                <EmptyTitle>No audit logs</EmptyTitle>
+                <EmptyDescription>
+                  Adjust the filters or wait for new audit events to appear.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          ) : (
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="py-10 text-center text-muted-foreground"
-                  >
-                    No audit logs matched the current filters.
-                  </TableCell>
+                  <TableHead>Timestamp</TableHead>
+                  <TableHead>Actor</TableHead>
+                  <TableHead>Action</TableHead>
+                  <TableHead>Resource</TableHead>
+                  <TableHead>Metadata</TableHead>
                 </TableRow>
-              ) : (
-                page.items.map((entry) => (
+              </TableHeader>
+              <TableBody>
+                {page.items.map((entry) => (
                   <TableRow key={entry.id}>
                     <TableCell>{formatTimestamp(entry.created_at)}</TableCell>
                     <TableCell>{entry.actor_username}</TableCell>
@@ -224,23 +243,25 @@ export default async function AuditLogsPage({
                       </code>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
-        <CardFooter>
-          <AuditLogPagination
-            action={action}
-            resourceType={resourceType}
-            resourceId={resourceId}
-            actorUsername={actorUsername}
-            limit={page.pagination.limit}
-            offset={page.pagination.offset}
-            total={page.pagination.total}
-            pageSizes={allowedPageSizes}
-          />
-        </CardFooter>
+        {page.items.length > 0 ? (
+          <CardFooter>
+            <AuditLogPagination
+              action={action}
+              resourceType={resourceType}
+              resourceId={resourceId}
+              actorUsername={actorUsername}
+              limit={page.pagination.limit}
+              offset={page.pagination.offset}
+              total={page.pagination.total}
+              pageSizes={allowedPageSizes}
+            />
+          </CardFooter>
+        ) : null}
       </Card>
     </div>
   )

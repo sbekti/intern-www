@@ -7,14 +7,17 @@ import { usePathname, useRouter } from "next/navigation"
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 export function NavMain({
+  label,
   items,
 }: {
+  label?: string
   items: {
     title: string
     url: string
@@ -43,6 +46,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
+      {label ? <SidebarGroupLabel>{label}</SidebarGroupLabel> : null}
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (

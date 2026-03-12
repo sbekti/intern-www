@@ -2,11 +2,8 @@
 
 import { TablePagination } from "@/components/table-pagination"
 
-type AuditLogPaginationProps = {
-  action: string
-  resourceType: string
-  resourceId: string
-  actorUsername: string
+type AuthSessionPaginationProps = {
+  tab: "mine" | "all"
   limit: number
   offset: number
   total: number
@@ -24,35 +21,29 @@ function buildQuery(values: Record<string, string | number | undefined>) {
   }
 
   const query = params.toString()
-  return query ? `/admin/audit-logs?${query}` : "/admin/audit-logs"
+  return query ? `/profile/security?${query}` : "/profile/security"
 }
 
-export function AuditLogPagination({
-  action,
-  resourceType,
-  resourceId,
-  actorUsername,
+export function AuthSessionPagination({
+  tab,
   limit,
   offset,
   total,
   pageSizes,
-}: AuditLogPaginationProps) {
-  const baseQuery = {
-    action,
-    resource_type: resourceType,
-    resource_id: resourceId,
-    actor_username: actorUsername,
-  }
-
+}: AuthSessionPaginationProps) {
   return (
     <TablePagination
-      pageSizeId="audit-page-size"
+      pageSizeId={tab === "all" ? "admin-session-page-size" : "profile-session-page-size"}
       limit={limit}
       offset={offset}
       total={total}
       pageSizes={pageSizes}
       buildHref={({ limit: nextLimit, offset: nextOffset }) =>
-        buildQuery({ ...baseQuery, limit: nextLimit, offset: nextOffset })
+        buildQuery({
+          tab: tab === "all" ? "all" : undefined,
+          limit: nextLimit,
+          offset: nextOffset,
+        })
       }
     />
   )

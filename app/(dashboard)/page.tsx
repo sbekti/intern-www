@@ -1,8 +1,12 @@
 import { CloudSunIcon } from "lucide-react"
 
 import { UnauthorizedState } from "@/components/api-state"
+import { HomeLoadingPanel } from "@/components/loading-panels"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDashboard } from "@/lib/api"
+import { hasForcedGlimmer } from "@/lib/utils"
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
 function weatherCodeLabel(code: number) {
   switch (code) {
@@ -35,11 +39,21 @@ function weatherCodeLabel(code: number) {
   }
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const params = await searchParams
+
+  if (hasForcedGlimmer(params)) {
+    return <HomeLoadingPanel />
+  }
+
   const dashboard = await getDashboard()
 
   if (!dashboard.ok) {
-    return <UnauthorizedState title="Dashboard unavailable" />
+    return <UnauthorizedState />
   }
 
   return (

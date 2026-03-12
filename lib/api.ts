@@ -79,6 +79,15 @@ export type AuditLogPage = {
   }
 }
 
+export type AuthSessionPage = {
+  items: AuthSession[]
+  pagination: {
+    limit: number
+    offset: number
+    total: number
+  }
+}
+
 export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 401 | 403 | 404 }
@@ -191,8 +200,40 @@ export function listDevices() {
   return getJson<{ items: NetworkDevice[] }>("/api/v1/networks/devices")
 }
 
-export function listProfileSessions() {
-  return getJson<{ items: AuthSession[] }>("/api/v1/profile/sessions")
+export function listProfileSessions(filters: {
+  limit?: number
+  offset?: number
+}) {
+  const query = new URLSearchParams()
+
+  for (const [key, rawValue] of Object.entries(filters)) {
+    if (rawValue === undefined || rawValue === null) {
+      continue
+    }
+
+    query.set(key, String(rawValue))
+  }
+
+  const suffix = query.size > 0 ? `?${query.toString()}` : ""
+  return getJson<AuthSessionPage>(`/api/v1/profile/sessions${suffix}`)
+}
+
+export function listAdminAuthSessions(filters: {
+  limit?: number
+  offset?: number
+}) {
+  const query = new URLSearchParams()
+
+  for (const [key, rawValue] of Object.entries(filters)) {
+    if (rawValue === undefined || rawValue === null) {
+      continue
+    }
+
+    query.set(key, String(rawValue))
+  }
+
+  const suffix = query.size > 0 ? `?${query.toString()}` : ""
+  return getJson<AuthSessionPage>(`/api/v1/admin/auth/sessions${suffix}`)
 }
 
 export function listAdminAuditLogs(filters: {

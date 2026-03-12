@@ -1,58 +1,95 @@
-import { ArrowUpRightIcon } from "lucide-react"
-
-import { UnauthorizedState } from "@/components/api-state"
+import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { SecurityLoadingPanel } from "@/components/loading-panels"
 import { SecuritySessions } from "@/components/security-sessions"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { listProfileSessions } from "@/lib/api"
+import { getProfile, listAdminAuthSessions, listProfileSessions } from "@/lib/api"
+import { hasForcedGlimmer } from "@/lib/utils"
+const defaultAdminPageSize = 25
+const allowedAdminPageSizes = [25, 50, 100, 200] as const
 
-const passwordSettingsUrl = "https://sso.corp.bekti.com/if/user/#/settings"
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-export default async function ProfileSecurityPage() {
-  const sessions = await listProfileSessions()
+function readParam(
+  params: Record<string, string | string[] | undefined>,
+  key: string
+) {
+  const value = params[key]
+  if (Array.isArray(value)) {
+    return value[0] ?? ""
+  }
+  return value ?? ""
+}
+
+function parseOffset(value: string) {
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return 0
+  }
+  return parsed
+}
+
+function parsePageSize(value: string) {
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed)) {
+    return defaultAdminPageSize
+  }
+  if (
+    allowedAdminPageSizes.includes(
+      parsed as (typeof allowedAdminPageSizes)[number]
+    )
+  ) {
+    return parsed
+  }
+  return defaultAdminPageSize
+}
+
+export default async function ProfileSecurityPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const params = await searchParams
+  const requestedTab = readParam(params, "tab") === "all" ? "all" : "mine"
+  const limit = parsePageSize(readParam(params, "limit"))
+  const offset = parseOffset(readParam(params, "offset"))
+  const profile = await getProfile()
+
+  if (!profile.ok) {
+    return <UnauthorizedState />
+  }
+
+  if (hasForcedGlimmer(params)) {
+    return <SecurityLoadingPanel isAdmin={profile.data.is_admin} />
+  }
+
+  const sessions = await listProfileSessions({ limit, offset })
 
   if (!sessions.ok) {
-    return <UnauthorizedState title="Security unavailable" />
+    return <UnauthorizedState />
+  }
+
+  const activeTab = profile.data.is_admin && requestedTab === "all" ? "all" : "mine"
+  const adminSessions =
+    profile.data.is_admin && activeTab === "all"
+      ? await listAdminAuthSessions({ limit, offset })
+      : null
+
+  if (adminSessions && !adminSessions.ok) {
+    if (adminSessions.status === 401) {
+      return <UnauthorizedState />
+    }
+
+    return <ForbiddenState />
   }
 
   return (
     <div className="grid gap-4 px-4 lg:px-6">
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Password</CardTitle>
-          <CardDescription>
-            Password changes are handled by the central SSO settings page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            nativeButton={false}
-            render={
-              <a
-                href={passwordSettingsUrl}
-                target="_blank"
-                rel="noreferrer"
-              />
-            }
-          >
-            <ArrowUpRightIcon data-icon="inline-end" />
-            Open Password Settings
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Client Sessions</CardTitle>
-          <CardDescription>
-            Active client sessions. Your browser SSO session is not listed
-            here.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SecuritySessions sessions={sessions.data.items} />
-        </CardContent>
-      </Card>
+      <SecuritySessions
+        isAdmin={profile.data.is_admin}
+        activeTab={activeTab}
+        personalSessions={sessions.data}
+        adminSessions={adminSessions?.data ?? null}
+        adminPageSizes={allowedAdminPageSizes}
+      />
     </div>
   )
 }

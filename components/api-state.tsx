@@ -9,10 +9,7 @@ import {
 } from "@/components/ui/empty"
 
 export function UnauthorizedState({
-  title,
-}: {
-  title: string
-}) {
+}: Record<string, never>) {
   return (
     <div className="px-4 lg:px-6">
       <Empty className="min-h-[20rem] border bg-card shadow-xs">
@@ -20,7 +17,7 @@ export function UnauthorizedState({
           <EmptyMedia variant="icon">
             <LockIcon />
           </EmptyMedia>
-          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyTitle>Sign-in required</EmptyTitle>
           <EmptyDescription>
             Authentication is required before this view can load data from the
             backend.
@@ -32,10 +29,7 @@ export function UnauthorizedState({
 }
 
 export function ForbiddenState({
-  title,
-}: {
-  title: string
-}) {
+}: Record<string, never>) {
   return (
     <div className="px-4 lg:px-6">
       <Empty className="min-h-[20rem] border bg-card shadow-xs">
@@ -43,7 +37,7 @@ export function ForbiddenState({
           <EmptyMedia variant="icon">
             <ShieldAlertIcon />
           </EmptyMedia>
-          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyTitle>Access denied</EmptyTitle>
           <EmptyDescription>
             Your account is authenticated, but this screen requires
             administrative access.

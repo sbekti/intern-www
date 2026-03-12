@@ -35,23 +35,36 @@ export function AppSidebar({
   user: SidebarUser
   isAdmin: boolean
 }) {
-  const navMain = [
+  const homeItems = [
     {
       title: "Home",
       url: "/",
       icon: <HouseIcon />,
     },
-    {
-      title: "Devices",
-      url: "/networks/devices",
-      icon: <MonitorSmartphoneIcon />,
-    },
-    {
-      title: "VLANs",
-      url: "/networks/vlans",
-      icon: <NetworkIcon />,
-    },
   ]
+  const networkItems = isAdmin
+    ? [
+        {
+          title: "Devices",
+          url: "/networks/devices",
+          icon: <MonitorSmartphoneIcon />,
+        },
+        {
+          title: "VLANs",
+          url: "/networks/vlans",
+          icon: <NetworkIcon />,
+        },
+      ]
+    : []
+  const administrationItems = isAdmin
+    ? [
+        {
+          title: "Audit Logs",
+          url: "/admin/audit-logs",
+          icon: <ScrollTextIcon />,
+        },
+      ]
+    : []
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -69,19 +82,15 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain} />
+        <NavMain items={homeItems} />
+        {networkItems.length > 0 ? (
+          <NavMain label="Network" items={networkItems} />
+        ) : null}
+        {administrationItems.length > 0 ? (
+          <NavMain label="Administration" items={administrationItems} />
+        ) : null}
       </SidebarContent>
       <SidebarFooter>
-        {isAdmin ? (
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton render={<Link href="/admin/audit-logs" />}>
-                <ScrollTextIcon />
-                <span>Audit Logs</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        ) : null}
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

@@ -3,7 +3,12 @@
 import { useRouter } from "next/navigation"
 import { startTransition, useMemo, useState } from "react"
 import { toast } from "sonner"
-import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
+import {
+  MonitorSmartphoneIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react"
 
 import type { NetworkDevice, Vlan } from "@/lib/api"
 import {
@@ -39,6 +44,7 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
 import {
@@ -227,6 +233,9 @@ export function DeviceManager({
           {sortedVlans.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MonitorSmartphoneIcon />
+                </EmptyMedia>
                 <EmptyTitle>No VLANs available</EmptyTitle>
                 <EmptyDescription>
                   Create at least one VLAN before registering devices.
@@ -236,6 +245,9 @@ export function DeviceManager({
           ) : sortedItems.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MonitorSmartphoneIcon />
+                </EmptyMedia>
                 <EmptyTitle>No devices</EmptyTitle>
                 <EmptyDescription>
                   Register the first device to assign it to a VLAN.
