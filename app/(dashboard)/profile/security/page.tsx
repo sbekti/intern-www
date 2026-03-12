@@ -45,8 +45,8 @@ export default async function ProfileSecurityPage() {
         <CardHeader>
           <CardTitle>Client Sessions</CardTitle>
           <CardDescription>
-            Active public-client sessions such as `internctl`. Your browser SSO
-            session is not listed here.
+            Active client sessions. Your browser SSO session is not listed
+            here.
           </CardDescription>
         </CardHeader>
         <CardContent>
