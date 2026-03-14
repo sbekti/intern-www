@@ -38,7 +38,7 @@ export function NavUser({
     email: string
     avatar: string
   }
-  logoutUrl: string
+  logoutUrl: string | null
 }) {
   const { isMobile } = useSidebar()
   const initials = user.name
@@ -109,10 +109,17 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem render={<a href={logoutUrl} />}>
-              <LogOutIcon />
-              Log out
-            </DropdownMenuItem>
+            {logoutUrl ? (
+              <DropdownMenuItem render={<a href={logoutUrl} />}>
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem disabled>
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

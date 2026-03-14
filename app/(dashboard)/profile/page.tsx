@@ -12,7 +12,7 @@ import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-export const metadata = createPageMetadata("Profile")
+export const metadata = createPageMetadata("/profile")
 
 export default async function ProfilePage({
   searchParams,
@@ -77,19 +77,26 @@ export default async function ProfilePage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button
-            nativeButton={false}
-            render={
-              <a
-                href={frontendSso.settingsUrl}
-                target="_blank"
-                rel="noreferrer"
-              />
-            }
-          >
-            <ArrowUpRightIcon data-icon="inline-end" />
-            Open SSO Settings
-          </Button>
+          {frontendSso.settingsUrl ? (
+            <Button
+              nativeButton={false}
+              render={
+                <a
+                  href={frontendSso.settingsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                />
+              }
+            >
+              <ArrowUpRightIcon data-icon="inline-end" />
+              Open SSO Settings
+            </Button>
+          ) : (
+            <Button disabled>
+              <ArrowUpRightIcon data-icon="inline-end" />
+              Open SSO Settings
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

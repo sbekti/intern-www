@@ -35,7 +35,7 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & {
   user: SidebarUser
   isAdmin: boolean
-  logoutUrl: string
+  logoutUrl: string | null
 }) {
   const homeItems = [
     {

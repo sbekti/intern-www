@@ -41,7 +41,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>
 const defaultPageSize = 25
 const allowedPageSizes = [25, 50, 100, 200] as const
 
-export const metadata = createPageMetadata("Audit Logs")
+export const metadata = createPageMetadata("/admin/audit-logs")
 
 function readParam(
   params: Record<string, string | string[] | undefined>,

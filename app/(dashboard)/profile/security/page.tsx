@@ -9,7 +9,7 @@ const allowedAdminPageSizes = [25, 50, 100, 200] as const
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-export const metadata = createPageMetadata("Security")
+export const metadata = createPageMetadata("/profile/security")
 
 function readParam(
   params: Record<string, string | string[] | undefined>,

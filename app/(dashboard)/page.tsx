@@ -9,7 +9,7 @@ import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-export const metadata = createPageMetadata("Home")
+export const metadata = createPageMetadata("/")
 
 function weatherCodeLabel(code: number) {
   switch (code) {

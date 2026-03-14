@@ -16,6 +16,6 @@ export function getPageTitle(pathname: string) {
   return pageTitles[pathname as keyof typeof pageTitles] ?? pageTitles["/"]
 }
 
-export function createPageMetadata(title: string): Metadata {
-  return { title }
+export function createPageMetadata(pathname: string): Metadata {
+  return { title: getPageTitle(pathname) }
 }

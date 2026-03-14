@@ -7,7 +7,7 @@ import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
-export const metadata = createPageMetadata("Devices")
+export const metadata = createPageMetadata("/networks/devices")
 
 export default async function DevicesPage({
   searchParams,
