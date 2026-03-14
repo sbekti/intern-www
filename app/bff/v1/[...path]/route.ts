@@ -8,6 +8,8 @@ function buildProxyHeaders(request: NextRequest, hasBody: boolean) {
   const passthrough = [
     "authorization",
     "cookie",
+    "x-forwarded-for",
+    "x-real-ip",
     "remote-user",
     "remote-name",
     "remote-email",
