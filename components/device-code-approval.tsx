@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
+import { buildBffPath } from "@/lib/bff"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -138,7 +139,9 @@ export function DeviceCodeApproval({
     setNeedsSignIn(false)
 
     const response = await fetch(
-      `/api/v1/auth/device_codes/${encodeURIComponent(formattedUserCode)}/${action}`,
+      buildBffPath(
+        `/auth/device_codes/${encodeURIComponent(formattedUserCode)}/${action}`
+      ),
       {
         method: "POST",
       }

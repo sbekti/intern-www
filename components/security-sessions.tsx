@@ -6,6 +6,7 @@ import { LaptopIcon, LoaderCircleIcon, LogOutIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import type { AuthSession, AuthSessionPage } from "@/lib/api"
+import { buildBffPath } from "@/lib/bff"
 import { AuthSessionPagination } from "@/components/auth-session-pagination"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -62,8 +63,8 @@ type SessionCardProps = {
   footer?: React.ReactNode
 }
 
-const personalBulkPath = "/api/v1/profile/sessions/revoke_others"
-const adminBulkPath = "/api/v1/admin/auth/sessions/revoke_all"
+const personalBulkPath = buildBffPath("/profile/sessions/revoke_others")
+const adminBulkPath = buildBffPath("/admin/auth/sessions/revoke_all")
 
 function formatTimestamp(value?: string) {
   if (!value) {
@@ -267,7 +268,7 @@ export function SecuritySessions({
       showUsername={false}
       pendingPath={pendingPath}
       isPending={isPending}
-      revokePathFor={(session) => `/api/v1/profile/sessions/${session.id}/revoke`}
+      revokePathFor={(session) => buildBffPath(`/profile/sessions/${session.id}/revoke`)}
       onRevoke={runAction}
       action={
         <Button
@@ -306,7 +307,7 @@ export function SecuritySessions({
       showUsername
       pendingPath={pendingPath}
       isPending={isPending}
-      revokePathFor={(session) => `/api/v1/admin/auth/sessions/${session.id}/revoke`}
+      revokePathFor={(session) => buildBffPath(`/admin/auth/sessions/${session.id}/revoke`)}
       onRevoke={runAction}
       action={
         <Button

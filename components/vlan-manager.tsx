@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { NetworkIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
 import type { Vlan } from "@/lib/api"
+import { buildBffPath } from "@/lib/bff"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -131,7 +132,9 @@ export function VlanManager({
     }
 
     const response = await fetch(
-      editing ? `/api/v1/networks/vlans/${editing.vlan_id}` : "/api/v1/networks/vlans",
+      editing
+        ? buildBffPath(`/networks/vlans/${editing.vlan_id}`)
+        : buildBffPath("/networks/vlans"),
       {
         method: editing ? "PATCH" : "POST",
         headers: {
@@ -160,7 +163,7 @@ export function VlanManager({
 
     setDeletingBusy(true)
 
-    const response = await fetch(`/api/v1/networks/vlans/${deleting.vlan_id}`, {
+    const response = await fetch(buildBffPath(`/networks/vlans/${deleting.vlan_id}`), {
       method: "DELETE",
     })
 

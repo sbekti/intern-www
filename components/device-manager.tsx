@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 
 import type { NetworkDevice, Vlan } from "@/lib/api"
+import { buildBffPath } from "@/lib/bff"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -166,8 +167,8 @@ export function DeviceManager({
 
     const response = await fetch(
       editing
-        ? `/api/v1/networks/devices/${editing.id}`
-        : "/api/v1/networks/devices",
+        ? buildBffPath(`/networks/devices/${editing.id}`)
+        : buildBffPath("/networks/devices"),
       {
         method: editing ? "PATCH" : "POST",
         headers: {
@@ -196,7 +197,7 @@ export function DeviceManager({
 
     setDeletingBusy(true)
 
-    const response = await fetch(`/api/v1/networks/devices/${deleting.id}`, {
+    const response = await fetch(buildBffPath(`/networks/devices/${deleting.id}`), {
       method: "DELETE",
     })
 
