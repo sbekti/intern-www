@@ -2,9 +2,12 @@ import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { TableLoadingPanel } from "@/components/loading-panels"
 import { VlanManager } from "@/components/vlan-manager"
 import { listVlans } from "@/lib/api"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export const metadata = createPageMetadata("VLANs")
 
 export default async function VlansPage({
   searchParams,

@@ -31,12 +31,14 @@ import {
 
 export function NavUser({
   user,
+  logoutUrl,
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  logoutUrl: string
 }) {
   const { isMobile } = useSidebar()
   const initials = user.name
@@ -107,9 +109,8 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon
-              />
+            <DropdownMenuItem render={<a href={logoutUrl} />}>
+              <LogOutIcon />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { appName } from "@/lib/page-titles"
 import { cn } from "@/lib/utils"
 
 const inter = Inter({
@@ -18,8 +19,11 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Intern",
-  description: "Internal dashboard for network and homelab management.",
+  title: {
+    default: appName,
+    template: `${appName} - %s`,
+  },
+  description: "Bektinet dashboard for network and homelab management.",
 }
 
 export default function RootLayout({

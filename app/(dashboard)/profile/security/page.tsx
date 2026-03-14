@@ -2,11 +2,14 @@ import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { SecurityLoadingPanel } from "@/components/loading-panels"
 import { SecuritySessions } from "@/components/security-sessions"
 import { getProfile, listAdminAuthSessions, listProfileSessions } from "@/lib/api"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 const defaultAdminPageSize = 25
 const allowedAdminPageSizes = [25, 50, 100, 200] as const
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export const metadata = createPageMetadata("Security")
 
 function readParam(
   params: Record<string, string | string[] | undefined>,

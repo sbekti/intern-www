@@ -1,4 +1,7 @@
 import { DeviceCodeApproval } from "@/components/device-code-approval"
+import { createPageMetadata } from "@/lib/page-titles"
+
+export const metadata = createPageMetadata("Device Approval")
 
 export default async function DeviceAuthPage({
   searchParams,

@@ -2,9 +2,12 @@ import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
 import { DeviceManager } from "@/components/device-manager"
 import { TableLoadingPanel } from "@/components/loading-panels"
 import { listDevices, listVlans } from "@/lib/api"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export const metadata = createPageMetadata("Devices")
 
 export default async function DevicesPage({
   searchParams,

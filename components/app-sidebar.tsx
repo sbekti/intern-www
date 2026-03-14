@@ -30,10 +30,12 @@ type SidebarUser = {
 export function AppSidebar({
   user,
   isAdmin,
+  logoutUrl,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   user: SidebarUser
   isAdmin: boolean
+  logoutUrl: string
 }) {
   const homeItems = [
     {
@@ -76,7 +78,7 @@ export function AppSidebar({
               render={<Link href="/" />}
             >
               <ServerIcon className="size-5!" />
-              <span className="text-base font-semibold">Intern</span>
+              <span className="text-base font-semibold">Bektinet</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -91,7 +93,7 @@ export function AppSidebar({
         ) : null}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser user={user} logoutUrl={logoutUrl} />
       </SidebarFooter>
     </Sidebar>
   )

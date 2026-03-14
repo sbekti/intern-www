@@ -5,6 +5,7 @@ import { DashboardShellProvider } from "@/components/dashboard-shell-provider"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getProfile } from "@/lib/api"
+import { getFrontendSsoConfig } from "@/lib/frontend-config"
 
 export default async function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default async function DashboardLayout({
   children: ReactNode
 }>) {
   const profile = await getProfile()
+  const frontendSso = getFrontendSsoConfig()
 
   if (!profile.ok) {
     throw new Error("Required authenticated profile unavailable for dashboard shell.")
@@ -35,6 +37,7 @@ export default async function DashboardLayout({
             avatar: "",
           }}
           isAdmin={profile.data.is_admin}
+          logoutUrl={frontendSso.logoutUrl}
         />
         <SidebarInset>
           <SiteHeader />

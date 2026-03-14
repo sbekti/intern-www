@@ -4,9 +4,12 @@ import { UnauthorizedState } from "@/components/api-state"
 import { HomeLoadingPanel } from "@/components/loading-panels"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDashboard } from "@/lib/api"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export const metadata = createPageMetadata("Home")
 
 function weatherCodeLabel(code: number) {
   switch (code) {
@@ -60,7 +63,7 @@ export default async function HomePage({
     <div className="grid gap-4 px-4 lg:px-6">
       <Card className="border-border/70 shadow-xs">
         <CardHeader>
-          <CardTitle>Welcome to Intern</CardTitle>
+          <CardTitle>Welcome to Bektinet</CardTitle>
           <CardDescription>
             {dashboard.data.welcome_message}
           </CardDescription>

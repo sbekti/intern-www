@@ -6,10 +6,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getProfile } from "@/lib/api"
+import { getFrontendSsoConfig } from "@/lib/frontend-config"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
-const passwordSettingsUrl = "https://sso.corp.bekti.com/if/user/#/settings"
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
+
+export const metadata = createPageMetadata("Profile")
 
 export default async function ProfilePage({
   searchParams,
@@ -23,6 +26,7 @@ export default async function ProfilePage({
   }
 
   const profile = await getProfile()
+  const frontendSso = getFrontendSsoConfig()
 
   if (!profile.ok) {
     return <UnauthorizedState />
@@ -77,7 +81,7 @@ export default async function ProfilePage({
             nativeButton={false}
             render={
               <a
-                href={passwordSettingsUrl}
+                href={frontendSso.settingsUrl}
                 target="_blank"
                 rel="noreferrer"
               />

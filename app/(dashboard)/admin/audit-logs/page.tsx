@@ -2,7 +2,9 @@ import Link from "next/link"
 import { ScrollTextIcon } from "lucide-react"
 
 import { AuditLogPagination } from "@/components/audit-log-pagination"
+import { AuditMetadataPreview } from "@/components/audit-metadata-preview"
 import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { LocalTimestamp } from "@/components/local-timestamp"
 import { AuditLogsLoadingPanel } from "@/components/loading-panels"
 import {
   Empty,
@@ -30,13 +32,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { listAdminAuditLogs, type AuditLogEntry } from "@/lib/api"
+import { listAdminAuditLogs } from "@/lib/api"
+import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
 const defaultPageSize = 25
 const allowedPageSizes = [25, 50, 100, 200] as const
+
+export const metadata = createPageMetadata("Audit Logs")
 
 function readParam(
   params: Record<string, string | string[] | undefined>,
@@ -68,13 +73,6 @@ function parsePageSize(value: string) {
   return defaultPageSize
 }
 
-function formatTimestamp(value: string) {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value))
-}
-
 function buildQuery(values: Record<string, string | number | undefined>) {
   const params = new URLSearchParams()
 
@@ -87,10 +85,6 @@ function buildQuery(values: Record<string, string | number | undefined>) {
 
   const query = params.toString()
   return query ? `/admin/audit-logs?${query}` : "/admin/audit-logs"
-}
-
-function renderMetadata(entry: AuditLogEntry) {
-  return JSON.stringify(entry.metadata)
 }
 
 export default async function AuditLogsPage({
@@ -226,7 +220,9 @@ export default async function AuditLogsPage({
               <TableBody>
                 {page.items.map((entry) => (
                   <TableRow key={entry.id}>
-                    <TableCell>{formatTimestamp(entry.created_at)}</TableCell>
+                    <TableCell>
+                      <LocalTimestamp value={entry.created_at} />
+                    </TableCell>
                     <TableCell>{entry.actor_username}</TableCell>
                     <TableCell>{entry.action}</TableCell>
                     <TableCell className="align-top">
@@ -238,9 +234,7 @@ export default async function AuditLogsPage({
                       </div>
                     </TableCell>
                     <TableCell className="max-w-[28rem] whitespace-normal">
-                      <code className="line-clamp-2 break-all text-xs text-muted-foreground">
-                        {renderMetadata(entry)}
-                      </code>
+                      <AuditMetadataPreview metadata={entry.metadata} />
                     </TableCell>
                   </TableRow>
                 ))}

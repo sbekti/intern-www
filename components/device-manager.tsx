@@ -12,6 +12,7 @@ import {
 
 import type { NetworkDevice, Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
+import { LocalTimestamp } from "@/components/local-timestamp"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -283,7 +284,7 @@ export function DeviceManager({
                       <Badge variant="outline">{device.vlan.name}</Badge>
                     </TableCell>
                     <TableCell>
-                      {new Date(device.updated_at).toLocaleString()}
+                      <LocalTimestamp value={device.updated_at} />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">

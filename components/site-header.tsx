@@ -4,19 +4,11 @@ import { usePathname } from "next/navigation"
 
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-
-const titles: Record<string, string> = {
-  "/": "Home",
-  "/profile": "Profile",
-  "/profile/security": "Security",
-  "/networks/vlans": "VLANs",
-  "/networks/devices": "Devices",
-  "/admin/audit-logs": "Audit Logs",
-}
+import { getPageTitle } from "@/lib/page-titles"
 
 export function SiteHeader() {
   const pathname = usePathname()
-  const title = titles[pathname] ?? titles["/"]
+  const title = getPageTitle(pathname)
 
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">

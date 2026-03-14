@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import type { AuthSession, AuthSessionPage } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
 import { AuthSessionPagination } from "@/components/auth-session-pagination"
+import { LocalTimestamp } from "@/components/local-timestamp"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -65,17 +66,6 @@ type SessionCardProps = {
 
 const personalBulkPath = buildBffPath("/profile/sessions/revoke_others")
 const adminBulkPath = buildBffPath("/admin/auth/sessions/revoke_all")
-
-function formatTimestamp(value?: string) {
-  if (!value) {
-    return "Never"
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value))
-}
 
 function buildSecurityQuery(tab: "mine" | "all", limit?: number, offset?: number) {
   const params = new URLSearchParams()
@@ -166,9 +156,15 @@ function SessionCard({
                         {session.is_current ? <Badge variant="secondary">Current</Badge> : null}
                       </div>
                     </TableCell>
-                    <TableCell>{formatTimestamp(session.last_used_at)}</TableCell>
-                    <TableCell>{formatTimestamp(session.idle_expires_at)}</TableCell>
-                    <TableCell>{formatTimestamp(session.expires_at)}</TableCell>
+                    <TableCell>
+                      <LocalTimestamp value={session.last_used_at} />
+                    </TableCell>
+                    <TableCell>
+                      <LocalTimestamp value={session.idle_expires_at} />
+                    </TableCell>
+                    <TableCell>
+                      <LocalTimestamp value={session.expires_at} />
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
