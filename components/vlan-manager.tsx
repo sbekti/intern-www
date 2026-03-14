@@ -216,8 +216,8 @@ export function VlanManager({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
                   <TableHead>VLAN ID</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -225,8 +225,8 @@ export function VlanManager({
               <TableBody>
                 {sortedItems.map((vlan) => (
                   <TableRow key={vlan.vlan_id}>
-                    <TableCell className="font-medium">{vlan.name}</TableCell>
                     <TableCell>{vlan.vlan_id}</TableCell>
+                    <TableCell className="font-medium">{vlan.name}</TableCell>
                     <TableCell className="max-w-[24rem] whitespace-normal text-muted-foreground">
                       {vlan.description || "-"}
                     </TableCell>
