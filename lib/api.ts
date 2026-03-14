@@ -27,11 +27,9 @@ export type Dashboard = {
 }
 
 export type Vlan = {
-  id: number
   name: string
   vlan_id: number
   description: string
-  is_active: boolean
   created_at: string
   updated_at: string
 }
@@ -41,7 +39,6 @@ export type NetworkDevice = {
   mac_address: string
   display_name: string
   vlan: {
-    id: number
     name: string
     vlan_id: number
   }

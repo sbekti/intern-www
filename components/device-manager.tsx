@@ -86,7 +86,7 @@ function mapDeviceToForm(device: NetworkDevice): DeviceFormState {
   return {
     display_name: device.display_name,
     mac_address: device.mac_address,
-    vlan_id: String(device.vlan.id),
+    vlan_id: String(device.vlan.vlan_id),
   }
 }
 
@@ -134,7 +134,7 @@ export function DeviceManager({
     setEditing(null)
     setForm({
       ...defaultFormState,
-      vlan_id: sortedVlans[0] ? String(sortedVlans[0].id) : "",
+      vlan_id: sortedVlans[0] ? String(sortedVlans[0].vlan_id) : "",
     })
     setSubmitError(null)
     setDialogOpen(true)
@@ -367,7 +367,7 @@ export function DeviceManager({
                   }
                   items={sortedVlans.map((vlan) => ({
                     label: vlan.name,
-                    value: String(vlan.id),
+                    value: String(vlan.vlan_id),
                   }))}
                 >
                   <SelectTrigger id="device-vlan" className="w-full">
@@ -376,7 +376,7 @@ export function DeviceManager({
                   <SelectContent>
                     <SelectGroup>
                       {sortedVlans.map((vlan) => (
-                        <SelectItem key={vlan.id} value={String(vlan.id)}>
+                        <SelectItem key={vlan.vlan_id} value={String(vlan.vlan_id)}>
                           {vlan.name}
                         </SelectItem>
                       ))}

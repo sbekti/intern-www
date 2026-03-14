@@ -16,7 +16,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -44,14 +43,12 @@ import {
 } from "@/components/ui/empty"
 import {
   Field,
-  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -59,7 +56,6 @@ type VlanFormState = {
   name: string
   vlan_id: string
   description: string
-  is_active: boolean
 }
 
 type ApiError = {
@@ -71,7 +67,6 @@ const defaultFormState: VlanFormState = {
   name: "",
   vlan_id: "",
   description: "",
-  is_active: true,
 }
 
 function mapVlanToForm(vlan: Vlan): VlanFormState {
@@ -79,7 +74,6 @@ function mapVlanToForm(vlan: Vlan): VlanFormState {
     name: vlan.name,
     vlan_id: String(vlan.vlan_id),
     description: vlan.description,
-    is_active: vlan.is_active,
   }
 }
 
@@ -134,11 +128,10 @@ export function VlanManager({
       name: form.name.trim(),
       vlan_id: Number(form.vlan_id),
       description: form.description.trim(),
-      is_active: form.is_active,
     }
 
     const response = await fetch(
-      editing ? `/api/v1/networks/vlans/${editing.id}` : "/api/v1/networks/vlans",
+      editing ? `/api/v1/networks/vlans/${editing.vlan_id}` : "/api/v1/networks/vlans",
       {
         method: editing ? "PATCH" : "POST",
         headers: {
@@ -167,7 +160,7 @@ export function VlanManager({
 
     setDeletingBusy(true)
 
-    const response = await fetch(`/api/v1/networks/vlans/${deleting.id}`, {
+    const response = await fetch(`/api/v1/networks/vlans/${deleting.vlan_id}`, {
       method: "DELETE",
     })
 
@@ -226,22 +219,16 @@ export function VlanManager({
                   <TableHead>Name</TableHead>
                   <TableHead>VLAN ID</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sortedItems.map((vlan) => (
-                  <TableRow key={vlan.id}>
+                  <TableRow key={vlan.vlan_id}>
                     <TableCell className="font-medium">{vlan.name}</TableCell>
                     <TableCell>{vlan.vlan_id}</TableCell>
                     <TableCell className="max-w-[24rem] whitespace-normal text-muted-foreground">
                       {vlan.description || "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={vlan.is_active ? "secondary" : "outline"}>
-                        {vlan.is_active ? "Active" : "Inactive"}
-                      </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -277,7 +264,7 @@ export function VlanManager({
             <DialogTitle>{editing ? "Edit VLAN" : "Create VLAN"}</DialogTitle>
             <DialogDescription>
               {editing
-                ? "Update the VLAN definition and status."
+                ? "Update the VLAN definition."
                 : "Add a new VLAN definition for device assignment."}
             </DialogDescription>
           </DialogHeader>
@@ -326,25 +313,6 @@ export function VlanManager({
                     }))
                   }
                 />
-              </Field>
-              <Field orientation="horizontal">
-                <Checkbox
-                  id="vlan-active"
-                  checked={form.is_active}
-                  onCheckedChange={(checked) =>
-                    setForm((current) => ({
-                      ...current,
-                      is_active: checked === true,
-                    }))
-                  }
-                />
-                <FieldContent>
-                  <FieldLabel htmlFor="vlan-active">Active</FieldLabel>
-                  <FieldDescription>
-                    Inactive VLANs stay in the database but should not be used
-                    for new assignments.
-                  </FieldDescription>
-                </FieldContent>
               </Field>
               <FieldError>{submitError}</FieldError>
             </FieldGroup>
