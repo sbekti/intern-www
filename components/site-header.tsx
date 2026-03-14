@@ -12,7 +12,6 @@ const titles: Record<string, string> = {
   "/networks/vlans": "VLANs",
   "/networks/devices": "Devices",
   "/admin/audit-logs": "Audit Logs",
-  "/auth/device": "Device Approval",
 }
 
 export function SiteHeader() {
