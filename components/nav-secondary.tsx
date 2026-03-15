@@ -33,6 +33,7 @@ export function NavSecondary({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                closeOnMobile
                 isActive={
                   pathname === item.url || pathname.startsWith(`${item.url}/`)
                 }

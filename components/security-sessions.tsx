@@ -8,12 +8,15 @@ import { toast } from "sonner"
 import type { AuthSession, AuthSessionPage } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
 import { AuthSessionPagination } from "@/components/auth-session-pagination"
+import {
+  CompactButtonLabel,
+  responsiveCompactButtonClass,
+} from "@/components/compact-button-label"
 import { LocalTimestamp } from "@/components/local-timestamp"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -39,7 +42,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 type SecuritySessionsProps = {
   isAdmin: boolean
@@ -59,6 +70,7 @@ type SessionCardProps = {
   revokePathFor: (session: AuthSession) => string
   onRevoke: (path: string, successMessage: string) => void
   action: React.ReactNode
+  scopeControl?: React.ReactNode
   emptyTitle: string
   emptyDescription: string
   footer?: React.ReactNode
@@ -104,6 +116,7 @@ function SessionCard({
   revokePathFor,
   onRevoke,
   action,
+  scopeControl,
   emptyTitle,
   emptyDescription,
   footer,
@@ -115,9 +128,12 @@ function SessionCard({
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        <CardAction>{action}</CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">{scopeControl}</div>
+          <div className="shrink-0">{action}</div>
+        </div>
         {sessions.length === 0 ? (
           <Empty className="min-h-[16rem] border bg-muted/20">
             <EmptyHeader>
@@ -169,16 +185,18 @@ function SessionCard({
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon-sm"
+                          className={responsiveCompactButtonClass}
                           disabled={isPending}
                           onClick={() => onRevoke(path, "Client session signed out.")}
+                          aria-label="Sign out session"
                         >
                           {busy ? (
                             <LoaderCircleIcon className="animate-spin" data-icon="inline-start" />
                           ) : (
                             <LogOutIcon data-icon="inline-start" />
                           )}
-                          Sign out
+                          <CompactButtonLabel>Sign out</CompactButtonLabel>
                         </Button>
                       </div>
                     </TableCell>
@@ -206,12 +224,6 @@ export function SecuritySessions({
   const [dialogTarget, setDialogTarget] = useState<"mine" | "all" | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  const personalPageStart =
-    personalSessions.pagination.total === 0 ? 0 : personalSessions.pagination.offset + 1
-  const personalPageEnd = Math.min(
-    personalSessions.pagination.offset + personalSessions.items.length,
-    personalSessions.pagination.total
-  )
   const adminPage = adminSessions ?? {
     items: [],
     pagination: {
@@ -220,12 +232,6 @@ export function SecuritySessions({
       total: 0,
     },
   }
-  const adminPageStart =
-    adminPage.pagination.total === 0 ? 0 : adminPage.pagination.offset + 1
-  const adminPageEnd = Math.min(
-    adminPage.pagination.offset + adminPage.items.length,
-    adminPage.pagination.total
-  )
 
   function navigateToTab(nextTab: "mine" | "all") {
     if (nextTab === "all") {
@@ -252,13 +258,57 @@ export function SecuritySessions({
     })
   }
 
+  const sessionScopeControl = isAdmin ? (
+    <>
+      <div className="lg:hidden">
+        <Select
+          value={activeTab}
+          onValueChange={(value) => navigateToTab(value === "all" ? "all" : "mine")}
+          items={[
+            { label: "My sessions", value: "mine" },
+            { label: "All users", value: "all" },
+          ]}
+        >
+          <SelectTrigger size="sm" className="w-full min-w-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="start">
+            <SelectGroup>
+              <SelectItem value="mine">My sessions</SelectItem>
+              <SelectItem value="all">All users</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <ToggleGroup
+        value={[activeTab]}
+        onValueChange={(value) => {
+          const nextValue = value[0]
+
+          if (!nextValue) {
+            return
+          }
+          navigateToTab(nextValue === "all" ? "all" : "mine")
+        }}
+        variant="outline"
+        size="sm"
+        className="hidden lg:flex"
+      >
+        <ToggleGroupItem value="mine" aria-label="Show my sessions">
+          My sessions
+        </ToggleGroupItem>
+        <ToggleGroupItem value="all" aria-label="Show all users sessions">
+          All users
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </>
+  ) : null
+
   const personalCard = (
     <SessionCard
       title="Client Sessions"
       description={
-        personalSessions.pagination.total === 0
-          ? "Active client sessions. Your browser SSO session is not listed here."
-          : `Showing ${personalPageStart}-${personalPageEnd} of ${personalSessions.pagination.total} active client sessions for this account. Your browser SSO session is not listed here.`
+        "Active client sessions. Your browser SSO session is not listed here."
       }
       sessions={personalSessions.items}
       showUsername={false}
@@ -266,15 +316,18 @@ export function SecuritySessions({
       isPending={isPending}
       revokePathFor={(session) => buildBffPath(`/profile/sessions/${session.id}/revoke`)}
       onRevoke={runAction}
+      scopeControl={activeTab === "mine" ? sessionScopeControl : null}
       action={
         <Button
           variant="outline"
-          size="sm"
+          size="icon-sm"
+          className={responsiveCompactButtonClass}
           disabled={isPending || personalSessions.pagination.total === 0}
           onClick={() => setDialogTarget("mine")}
+          aria-label="Sign out all client sessions"
         >
           <LogOutIcon data-icon="inline-start" />
-          Sign out all clients
+          <CompactButtonLabel>Sign out all clients</CompactButtonLabel>
         </Button>
       }
       emptyTitle="No active client sessions"
@@ -295,9 +348,7 @@ export function SecuritySessions({
     <SessionCard
       title="All Client Sessions"
       description={
-        adminPage.pagination.total === 0
-          ? "Active client sessions across all users. Browser SSO sessions are not listed here."
-          : `Showing ${adminPageStart}-${adminPageEnd} of ${adminPage.pagination.total} active client sessions across all users.`
+        "Active client sessions across all users."
       }
       sessions={adminPage.items}
       showUsername
@@ -305,15 +356,18 @@ export function SecuritySessions({
       isPending={isPending}
       revokePathFor={(session) => buildBffPath(`/admin/auth/sessions/${session.id}/revoke`)}
       onRevoke={runAction}
+      scopeControl={activeTab === "all" ? sessionScopeControl : null}
       action={
         <Button
           variant="outline"
-          size="sm"
+          size="icon-sm"
+          className={responsiveCompactButtonClass}
           disabled={isPending || adminPage.pagination.total === 0}
           onClick={() => setDialogTarget("all")}
+          aria-label="Sign out all users sessions"
         >
           <LogOutIcon data-icon="inline-start" />
-          Sign out everyone
+          <CompactButtonLabel>Sign out everyone</CompactButtonLabel>
         </Button>
       }
       emptyTitle="No active client sessions"
@@ -364,19 +418,7 @@ export function SecuritySessions({
 
   return (
     <>
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => navigateToTab(value === "all" ? "all" : "mine")}
-        className="gap-4"
-      >
-        <TabsList variant="line">
-          <TabsTrigger value="mine">My sessions</TabsTrigger>
-          <TabsTrigger value="all">All users</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="mine">{personalCard}</TabsContent>
-        <TabsContent value="all">{adminCard}</TabsContent>
-      </Tabs>
+      {activeTab === "all" ? adminCard : personalCard}
 
       <AlertDialog open={dialogTarget === "mine"} onOpenChange={(open) => setDialogTarget(open ? "mine" : null)}>
         <AlertDialogContent>

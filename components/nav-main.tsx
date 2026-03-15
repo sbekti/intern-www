@@ -52,6 +52,7 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                closeOnMobile
                 tooltip={item.title}
                 isActive={isItemActive(item.url)}
                 render={<Link href={item.url} onClick={(event) => handleNavClick(event, item.url)} />}

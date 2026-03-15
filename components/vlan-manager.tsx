@@ -8,6 +8,10 @@ import { NetworkIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import type { Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
 import {
+  CompactButtonLabel,
+  responsiveCompactButtonClass,
+} from "@/components/compact-button-label"
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -189,10 +193,15 @@ export function VlanManager({
               Create, update, and remove VLAN definitions for the network.
             </CardDescription>
           </div>
-          <CardAction>
-            <Button size="sm" onClick={openCreate}>
+          <CardAction className="ml-3 sm:ml-0">
+            <Button
+              size="icon-sm"
+              className={responsiveCompactButtonClass}
+              onClick={openCreate}
+              aria-label="Add VLAN"
+            >
               <PlusIcon data-icon="inline-start" />
-              Add VLAN
+              <span className="hidden sm:inline">Add VLAN</span>
             </Button>
           </CardAction>
         </CardHeader>
@@ -237,19 +246,23 @@ export function VlanManager({
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon-sm"
+                          className={responsiveCompactButtonClass}
                           onClick={() => openEdit(vlan)}
+                          aria-label="Edit VLAN"
                         >
                           <PencilIcon data-icon="inline-start" />
-                          Edit
+                          <CompactButtonLabel>Edit</CompactButtonLabel>
                         </Button>
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon-sm"
+                          className={responsiveCompactButtonClass}
                           onClick={() => setDeleting(vlan)}
+                          aria-label="Delete VLAN"
                         >
                           <Trash2Icon data-icon="inline-start" />
-                          Delete
+                          <CompactButtonLabel>Delete</CompactButtonLabel>
                         </Button>
                       </div>
                     </TableCell>

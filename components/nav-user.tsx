@@ -40,13 +40,19 @@ export function NavUser({
   }
   logoutUrl: string | null
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile, setOpenMobile } = useSidebar()
   const initials = user.name
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((segment) => segment[0]?.toUpperCase() ?? "")
     .join("")
+
+  function closeMobileSidebar() {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -97,12 +103,18 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem render={<Link href="/profile" />}>
+              <DropdownMenuItem
+                render={<Link href="/profile" onClick={closeMobileSidebar} />}
+              >
                 <CircleUserRoundIcon
                 />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/profile/security" />}>
+              <DropdownMenuItem
+                render={
+                  <Link href="/profile/security" onClick={closeMobileSidebar} />
+                }
+              >
                 <KeyRoundIcon
                 />
                 Security
@@ -110,7 +122,9 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             {logoutUrl ? (
-              <DropdownMenuItem render={<a href={logoutUrl} />}>
+              <DropdownMenuItem
+                render={<a href={logoutUrl} onClick={closeMobileSidebar} />}
+              >
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>

@@ -56,8 +56,11 @@ export function TablePagination({
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center">
-      <Field orientation="horizontal" className="w-fit items-center gap-3">
+    <div className="flex w-full flex-wrap items-center gap-4">
+      <Field
+        orientation="horizontal"
+        className="hidden w-fit items-center gap-3 lg:flex"
+      >
         <FieldLabel htmlFor={pageSizeId}>Rows per page</FieldLabel>
         <Select
           value={String(limit)}
@@ -83,7 +86,7 @@ export function TablePagination({
         </Select>
       </Field>
 
-      <div className="flex w-fit items-center justify-center text-sm font-medium md:ml-auto">
+      <div className="flex items-center justify-center text-sm font-medium lg:ml-auto">
         Page {currentPage} of {totalPages}
       </div>
 

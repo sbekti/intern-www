@@ -501,20 +501,27 @@ function SidebarMenuButton({
   isActive = false,
   variant = "default",
   size = "default",
+  closeOnMobile = false,
   tooltip,
   className,
   ...props
 }: useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
     isActive?: boolean
+    closeOnMobile?: boolean
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
-  const { isMobile, state } = useSidebar()
+  const { isMobile, setOpenMobile, state } = useSidebar()
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
+        onClick: () => {
+          if (closeOnMobile && isMobile) {
+            setOpenMobile(false)
+          }
+        },
       },
       props
     ),

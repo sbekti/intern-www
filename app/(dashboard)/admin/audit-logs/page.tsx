@@ -233,8 +233,12 @@ export default async function AuditLogsPage({
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[28rem] whitespace-normal">
-                      <AuditMetadataPreview metadata={entry.metadata} />
+                    <TableCell className="min-w-[20rem] max-w-[28rem] whitespace-normal">
+                      <AuditMetadataPreview
+                        metadata={entry.metadata}
+                        actorUsername={entry.actor_username}
+                        action={entry.action}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

@@ -12,7 +12,10 @@ import {
 
 import type { NetworkDevice, Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
-import { LocalTimestamp } from "@/components/local-timestamp"
+import {
+  CompactButtonLabel,
+  responsiveCompactButtonClass,
+} from "@/components/compact-button-label"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -224,10 +227,16 @@ export function DeviceManager({
               Register devices and assign each MAC address to the correct VLAN.
             </CardDescription>
           </div>
-          <CardAction>
-            <Button size="sm" onClick={openCreate} disabled={sortedVlans.length === 0}>
+          <CardAction className="ml-3 sm:ml-0">
+            <Button
+              size="icon-sm"
+              className={responsiveCompactButtonClass}
+              onClick={openCreate}
+              disabled={sortedVlans.length === 0}
+              aria-label="Add Device"
+            >
               <PlusIcon data-icon="inline-start" />
-              Add Device
+              <span className="hidden sm:inline">Add Device</span>
             </Button>
           </CardAction>
         </CardHeader>
@@ -269,7 +278,6 @@ export function DeviceManager({
                   <TableHead>Name</TableHead>
                   <TableHead>MAC Address</TableHead>
                   <TableHead>VLAN</TableHead>
-                  <TableHead>Updated</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -279,30 +287,31 @@ export function DeviceManager({
                     <TableCell className="font-medium">
                       {device.display_name}
                     </TableCell>
-                    <TableCell>{device.mac_address}</TableCell>
+                    <TableCell className="font-mono">{device.mac_address}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{device.vlan.name}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <LocalTimestamp value={device.updated_at} />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon-sm"
+                          className={responsiveCompactButtonClass}
                           onClick={() => openEdit(device)}
+                          aria-label="Edit device"
                         >
                           <PencilIcon data-icon="inline-start" />
-                          Edit
+                          <CompactButtonLabel>Edit</CompactButtonLabel>
                         </Button>
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon-sm"
+                          className={responsiveCompactButtonClass}
                           onClick={() => setDeleting(device)}
+                          aria-label="Delete device"
                         >
                           <Trash2Icon data-icon="inline-start" />
-                          Delete
+                          <CompactButtonLabel>Delete</CompactButtonLabel>
                         </Button>
                       </div>
                     </TableCell>
