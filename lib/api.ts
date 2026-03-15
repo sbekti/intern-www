@@ -124,6 +124,7 @@ export async function buildForwardHeaders() {
   const passthrough = [
     "authorization",
     "cookie",
+    "x-intern-forward-auth",
     "remote-user",
     "remote-name",
     "remote-email",

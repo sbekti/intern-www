@@ -10,6 +10,7 @@ function buildProxyHeaders(request: NextRequest, hasBody: boolean) {
     "cookie",
     "x-forwarded-for",
     "x-real-ip",
+    "x-intern-forward-auth",
     "remote-user",
     "remote-name",
     "remote-email",
