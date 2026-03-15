@@ -8,8 +8,9 @@ import { NetworkIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import type { Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
 import {
-  CompactButtonLabel,
+  IconOnlyButtonLabel,
   responsiveCompactButtonClass,
+  iconOnlyButtonClass,
 } from "@/components/compact-button-label"
 import {
   AlertDialog,
@@ -247,12 +248,12 @@ export function VlanManager({
                         <Button
                           variant="outline"
                           size="icon-sm"
-                          className={responsiveCompactButtonClass}
+                          className={iconOnlyButtonClass}
                           onClick={() => openEdit(vlan)}
                           aria-label="Edit VLAN"
                         >
                           <PencilIcon data-icon="inline-start" />
-                          <CompactButtonLabel>Edit</CompactButtonLabel>
+                          <IconOnlyButtonLabel>Edit</IconOnlyButtonLabel>
                         </Button>
                         <Button
                           variant="outline"
@@ -262,7 +263,7 @@ export function VlanManager({
                           aria-label="Delete VLAN"
                         >
                           <Trash2Icon data-icon="inline-start" />
-                          <CompactButtonLabel>Delete</CompactButtonLabel>
+                          <IconOnlyButtonLabel>Delete</IconOnlyButtonLabel>
                         </Button>
                       </div>
                     </TableCell>

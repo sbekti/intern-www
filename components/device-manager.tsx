@@ -13,8 +13,9 @@ import {
 import type { NetworkDevice, Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
 import {
-  CompactButtonLabel,
+  IconOnlyButtonLabel,
   responsiveCompactButtonClass,
+  iconOnlyButtonClass,
 } from "@/components/compact-button-label"
 import {
   AlertDialog,
@@ -296,12 +297,12 @@ export function DeviceManager({
                         <Button
                           variant="outline"
                           size="icon-sm"
-                          className={responsiveCompactButtonClass}
+                          className={iconOnlyButtonClass}
                           onClick={() => openEdit(device)}
                           aria-label="Edit device"
                         >
                           <PencilIcon data-icon="inline-start" />
-                          <CompactButtonLabel>Edit</CompactButtonLabel>
+                          <IconOnlyButtonLabel>Edit</IconOnlyButtonLabel>
                         </Button>
                         <Button
                           variant="outline"
@@ -311,7 +312,7 @@ export function DeviceManager({
                           aria-label="Delete device"
                         >
                           <Trash2Icon data-icon="inline-start" />
-                          <CompactButtonLabel>Delete</CompactButtonLabel>
+                          <IconOnlyButtonLabel>Delete</IconOnlyButtonLabel>
                         </Button>
                       </div>
                     </TableCell>

@@ -10,7 +10,9 @@ import { buildBffPath } from "@/lib/bff"
 import { AuthSessionPagination } from "@/components/auth-session-pagination"
 import {
   CompactButtonLabel,
+  IconOnlyButtonLabel,
   responsiveCompactButtonClass,
+  iconOnlyButtonClass,
 } from "@/components/compact-button-label"
 import { LocalTimestamp } from "@/components/local-timestamp"
 import { Badge } from "@/components/ui/badge"
@@ -186,7 +188,7 @@ function SessionCard({
                         <Button
                           variant="outline"
                           size="icon-sm"
-                          className={responsiveCompactButtonClass}
+                          className={iconOnlyButtonClass}
                           disabled={isPending}
                           onClick={() => onRevoke(path, "Client session signed out.")}
                           aria-label="Sign out session"
@@ -196,7 +198,7 @@ function SessionCard({
                           ) : (
                             <LogOutIcon data-icon="inline-start" />
                           )}
-                          <CompactButtonLabel>Sign out</CompactButtonLabel>
+                          <IconOnlyButtonLabel>Sign out</IconOnlyButtonLabel>
                         </Button>
                       </div>
                     </TableCell>
