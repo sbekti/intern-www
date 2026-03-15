@@ -42,8 +42,69 @@ export type NetworkDevice = {
     name: string
     vlan_id: number
   }
+  presence?: PresenceSummary
   created_at: string
   updated_at: string
+}
+
+export type PresenceSummary = {
+  status: "online" | "offline"
+  last_seen_at: string
+  source_key: string
+  source_type: "radius" | "unifi" | "juniper-snmp" | "juniper-ssh"
+  medium: "wireless" | "wired"
+  observation_external_id?: string
+  observation_display_name?: string
+  location_label?: string
+  ssid?: string
+}
+
+export type PresencePagination = {
+  limit: number
+  offset: number
+  total: number
+}
+
+export type ObservedPresenceClient = {
+  id: string
+  mac_address: string
+  managed_device_id?: string
+  managed_device_name?: string
+  status: "online" | "offline"
+  first_seen_at: string
+  last_seen_at: string
+  source_key: string
+  source_type: "radius" | "unifi" | "juniper-snmp" | "juniper-ssh"
+  medium: "wireless" | "wired"
+  observation_point_id?: string
+  observation_external_id?: string
+  observation_display_name?: string
+  location_label?: string
+  ssid?: string
+}
+
+export type ObservedPresenceClientPage = {
+  items: ObservedPresenceClient[]
+  pagination: PresencePagination
+}
+
+export type PresenceObservationPoint = {
+  id: string
+  source_key: string
+  source_type: "radius" | "unifi" | "juniper-snmp" | "juniper-ssh"
+  medium: "wireless" | "wired"
+  external_id: string
+  parent_external_id: string
+  display_name: string
+  location_label: string
+  notes: string
+  ssid?: string
+  last_seen_at?: string
+}
+
+export type PresenceObservationPointPage = {
+  items: PresenceObservationPoint[]
+  pagination: PresencePagination
 }
 
 export type AuthSession = {
@@ -93,6 +154,20 @@ type AllowedStatus = 401 | 403 | 404
 
 function isAllowedStatus(status: number): status is AllowedStatus {
   return status === 401 || status === 403 || status === 404
+}
+
+function buildQuerySuffix(filters: Record<string, string | number | undefined>) {
+  const query = new URLSearchParams()
+
+  for (const [key, rawValue] of Object.entries(filters)) {
+    if (rawValue === undefined || rawValue === null || rawValue === "") {
+      continue
+    }
+
+    query.set(key, String(rawValue))
+  }
+
+  return query.size > 0 ? `?${query.toString()}` : ""
 }
 
 export async function resolveApiBaseUrl() {
@@ -202,36 +277,18 @@ export function listProfileSessions(filters: {
   limit?: number
   offset?: number
 }) {
-  const query = new URLSearchParams()
-
-  for (const [key, rawValue] of Object.entries(filters)) {
-    if (rawValue === undefined || rawValue === null) {
-      continue
-    }
-
-    query.set(key, String(rawValue))
-  }
-
-  const suffix = query.size > 0 ? `?${query.toString()}` : ""
-  return getJson<AuthSessionPage>(`/api/v1/profile/sessions${suffix}`)
+  return getJson<AuthSessionPage>(
+    `/api/v1/profile/sessions${buildQuerySuffix(filters)}`
+  )
 }
 
 export function listAdminAuthSessions(filters: {
   limit?: number
   offset?: number
 }) {
-  const query = new URLSearchParams()
-
-  for (const [key, rawValue] of Object.entries(filters)) {
-    if (rawValue === undefined || rawValue === null) {
-      continue
-    }
-
-    query.set(key, String(rawValue))
-  }
-
-  const suffix = query.size > 0 ? `?${query.toString()}` : ""
-  return getJson<AuthSessionPage>(`/api/v1/admin/auth/sessions${suffix}`)
+  return getJson<AuthSessionPage>(
+    `/api/v1/admin/auth/sessions${buildQuerySuffix(filters)}`
+  )
 }
 
 export function listAdminAuditLogs(filters: {
@@ -242,16 +299,35 @@ export function listAdminAuditLogs(filters: {
   limit?: number
   offset?: number
 }) {
-  const query = new URLSearchParams()
+  return getJson<AuditLogPage>(
+    `/api/v1/admin/audit_logs${buildQuerySuffix(filters)}`
+  )
+}
 
-  for (const [key, rawValue] of Object.entries(filters)) {
-    if (rawValue === undefined || rawValue === null || rawValue === "") {
-      continue
-    }
+export function listObservedPresenceClients(filters: {
+  q?: string
+  status?: string
+  source_type?: string
+  source_key?: string
+  medium?: string
+  location?: string
+  limit?: number
+  offset?: number
+}) {
+  return getJson<ObservedPresenceClientPage>(
+    `/api/v1/networks/presence/clients${buildQuerySuffix(filters)}`
+  )
+}
 
-    query.set(key, String(rawValue))
-  }
-
-  const suffix = query.size > 0 ? `?${query.toString()}` : ""
-  return getJson<AuditLogPage>(`/api/v1/admin/audit_logs${suffix}`)
+export function listPresenceObservationPoints(filters: {
+  q?: string
+  source_type?: string
+  source_key?: string
+  medium?: string
+  limit?: number
+  offset?: number
+}) {
+  return getJson<PresenceObservationPointPage>(
+    `/api/v1/networks/presence/observation_points${buildQuerySuffix(filters)}`
+  )
 }

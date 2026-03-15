@@ -12,11 +12,13 @@ import {
 
 import type { NetworkDevice, Vlan } from "@/lib/api"
 import { buildBffPath } from "@/lib/bff"
+import { mediumLabel, sourceTypeLabel, statusLabel } from "@/lib/presence"
 import {
   IconOnlyButtonLabel,
   responsiveCompactButtonClass,
   iconOnlyButtonClass,
 } from "@/components/compact-button-label"
+import { LocalTimestamp } from "@/components/local-timestamp"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -279,6 +281,7 @@ export function DeviceManager({
                   <TableHead>Name</TableHead>
                   <TableHead>MAC Address</TableHead>
                   <TableHead>VLAN</TableHead>
+                  <TableHead>Last Seen</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -291,6 +294,50 @@ export function DeviceManager({
                     <TableCell className="font-mono">{device.mac_address}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{device.vlan.name}</Badge>
+                    </TableCell>
+                    <TableCell className="min-w-[16rem]">
+                      {device.presence ? (
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge
+                              variant={
+                                device.presence.status === "online"
+                                  ? "secondary"
+                                  : "outline"
+                              }
+                            >
+                              {statusLabel(device.presence.status)}
+                            </Badge>
+                            <Badge variant="outline">
+                              {mediumLabel(device.presence.medium)}
+                            </Badge>
+                            <Badge variant="outline">
+                              {sourceTypeLabel(device.presence.source_type)}
+                            </Badge>
+                          </div>
+                          <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+                            <LocalTimestamp value={device.presence.last_seen_at} />
+                            {device.presence.location_label ? (
+                              <span>{device.presence.location_label}</span>
+                            ) : device.presence.observation_display_name ? (
+                              <span>{device.presence.observation_display_name}</span>
+                            ) : device.presence.observation_external_id ? (
+                              <span className="font-mono text-xs">
+                                {device.presence.observation_external_id}
+                              </span>
+                            ) : null}
+                            {device.presence.ssid ? (
+                              <span className="truncate text-xs">
+                                SSID {device.presence.ssid}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          Never observed
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
