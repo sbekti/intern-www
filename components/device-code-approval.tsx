@@ -37,7 +37,6 @@ type ParsedApiError =
   | { kind: "error"; message: string }
 
 const sessionsPath = "/profile/security?tab=mine"
-const signInPath = "/auth/device/login"
 
 function normalizeUserCode(value: string) {
   return value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8)
@@ -122,8 +121,12 @@ export function DeviceCodeApproval({
   const router = useRouter()
   const [userCode, setUserCode] = useState(normalizeUserCode(initialUserCode))
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [needsSignIn, setNeedsSignIn] = useState(false)
   const [busyAction, setBusyAction] = useState<"approve" | "deny" | null>(null)
+  const formattedUserCode = formatUserCode(userCode)
+  const approvalPath =
+    formattedUserCode.length > 0
+      ? `/auth/device?user_code=${encodeURIComponent(formattedUserCode)}`
+      : "/auth/device"
 
   async function submit(action: "approve" | "deny") {
     const normalizedUserCode = normalizeUserCode(userCode)
@@ -136,22 +139,32 @@ export function DeviceCodeApproval({
 
     setBusyAction(action)
     setSubmitError(null)
-    setNeedsSignIn(false)
 
-    const response = await fetch(
-      buildBffPath(
-        `/auth/device_codes/${encodeURIComponent(formattedUserCode)}/${action}`
-      ),
-      {
-        method: "POST",
-      }
-    )
+    let response: Response
+
+    try {
+      response = await fetch(
+        buildBffPath(
+          `/auth/device_codes/${encodeURIComponent(formattedUserCode)}/${action}`
+        ),
+        {
+          method: "POST",
+        }
+      )
+    } catch {
+      window.location.assign(approvalPath)
+      return
+    }
 
     if (!response.ok) {
       setBusyAction(null)
       const error = await parseApiError(response)
+      if (error.kind === "auth") {
+        window.location.assign(approvalPath)
+        return
+      }
+
       setSubmitError(error.message)
-      setNeedsSignIn(error.kind === "auth")
       return
     }
 
@@ -159,12 +172,6 @@ export function DeviceCodeApproval({
     toast.success(action === "approve" ? "Device login approved." : "Device login denied.")
     router.push(sessionsPath)
   }
-
-  const formattedUserCode = formatUserCode(userCode)
-  const signInHref =
-    formattedUserCode.length > 0
-      ? `${signInPath}?user_code=${encodeURIComponent(formattedUserCode)}`
-      : signInPath
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-8 lg:px-6">
@@ -197,9 +204,6 @@ export function DeviceCodeApproval({
                     if (submitError) {
                       setSubmitError(null)
                     }
-                    if (needsSignIn) {
-                      setNeedsSignIn(false)
-                    }
                   }}
                   containerClassName="justify-center"
                   autoFocus
@@ -225,15 +229,6 @@ export function DeviceCodeApproval({
               <FieldError>{submitError}</FieldError>
             </FieldGroup>
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              {needsSignIn ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => router.push(signInHref)}
-                >
-                  Sign in to approve
-                </Button>
-              ) : null}
               <Button
                 type="button"
                 variant="outline"
