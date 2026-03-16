@@ -19,6 +19,7 @@ import {
   iconOnlyButtonClass,
 } from "@/components/compact-button-label"
 import { LocalTimestamp } from "@/components/local-timestamp"
+import { NetworkDevicesScopeControl } from "@/components/network-devices-tabs"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +34,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -230,20 +230,25 @@ export function DeviceManager({
               Register devices and assign each MAC address to the correct VLAN.
             </CardDescription>
           </div>
-          <CardAction className="ml-3 sm:ml-0">
-            <Button
-              size="icon-sm"
-              className={responsiveCompactButtonClass}
-              onClick={openCreate}
-              disabled={sortedVlans.length === 0}
-              aria-label="Add Device"
-            >
-              <PlusIcon data-icon="inline-start" />
-              <span className="hidden sm:inline">Add Device</span>
-            </Button>
-          </CardAction>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <NetworkDevicesScopeControl tab="managed" />
+            </div>
+            <div className="shrink-0">
+              <Button
+                size="icon-sm"
+                className={responsiveCompactButtonClass}
+                onClick={openCreate}
+                disabled={sortedVlans.length === 0}
+                aria-label="Add Device"
+              >
+                <PlusIcon data-icon="inline-start" />
+                <span className="hidden sm:inline">Add Device</span>
+              </Button>
+            </div>
+          </div>
           {sortedVlans.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>

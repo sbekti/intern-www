@@ -12,6 +12,7 @@ import type {
 import { buildBffPath } from "@/lib/bff"
 import { mediumLabel, sourceTypeLabel } from "@/lib/presence"
 import { LocalTimestamp } from "@/components/local-timestamp"
+import { NetworkDevicesScopeControl } from "@/components/network-devices-tabs"
 import { TablePagination } from "@/components/table-pagination"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -203,7 +204,10 @@ export function ObservationPointManager({
             Search by source, location label, notes, SSID, or raw observation ID.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <div className="min-w-0">
+            <NetworkDevicesScopeControl tab="locations" />
+          </div>
           <form
             className="flex flex-col gap-6"
             onSubmit={(event) => {

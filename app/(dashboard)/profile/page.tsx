@@ -1,6 +1,6 @@
 import { ArrowUpRightIcon } from "lucide-react"
 
-import { UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { ProfileLoadingPanel } from "@/components/loading-panels"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -29,7 +29,7 @@ export default async function ProfilePage({
   const frontendSso = getFrontendSsoConfig()
 
   if (!profile.ok) {
-    return <UnauthorizedState />
+    return <RequiredBackendState status={profile.status} />
   }
 
   return (

@@ -1,36 +1,97 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { MonitorSmartphoneIcon, RadioTowerIcon, WaypointsIcon } from "lucide-react"
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
-type DevicesTab = "managed" | "observed" | "locations"
+export type DevicesTab = "managed" | "observed" | "locations"
 
-export function NetworkDevicesTabs({ tab }: { tab: DevicesTab }) {
+export function buildDevicesHref(tab: DevicesTab) {
+  if (tab === "managed") {
+    return "/networks/devices"
+  }
+
+  return `/networks/devices?tab=${tab}`
+}
+
+export function NetworkDevicesScopeControl({ tab }: { tab: DevicesTab }) {
   const router = useRouter()
 
+  function navigate(nextTab: DevicesTab) {
+    router.push(buildDevicesHref(nextTab))
+  }
+
   return (
-    <Tabs
-      value={tab}
-      onValueChange={(value) => {
-        router.push(`/networks/devices?tab=${value}`)
-      }}
-    >
-      <TabsList variant="line" className="w-full justify-start">
-        <TabsTrigger value="managed">
-          <MonitorSmartphoneIcon data-icon="inline-start" />
+    <>
+      <div className="lg:hidden">
+        <Select
+          value={tab}
+          onValueChange={(value) =>
+            navigate(
+              value === "observed"
+                ? "observed"
+                : value === "locations"
+                  ? "locations"
+                  : "managed"
+            )
+          }
+          items={[
+            { label: "Managed", value: "managed" },
+            { label: "Observed", value: "observed" },
+            { label: "Locations", value: "locations" },
+          ]}
+        >
+          <SelectTrigger size="sm" className="w-full min-w-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="start">
+            <SelectGroup>
+              <SelectItem value="managed">Managed</SelectItem>
+              <SelectItem value="observed">Observed</SelectItem>
+              <SelectItem value="locations">Locations</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <ToggleGroup
+        value={[tab]}
+        onValueChange={(value) => {
+          const nextValue = value[0]
+
+          if (!nextValue) {
+            return
+          }
+
+          navigate(
+            nextValue === "observed"
+              ? "observed"
+              : nextValue === "locations"
+                ? "locations"
+                : "managed"
+          )
+        }}
+        variant="outline"
+        size="sm"
+        className="hidden lg:flex"
+      >
+        <ToggleGroupItem value="managed" aria-label="Show managed devices">
           Managed
-        </TabsTrigger>
-        <TabsTrigger value="observed">
-          <RadioTowerIcon data-icon="inline-start" />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="observed" aria-label="Show observed devices">
           Observed
-        </TabsTrigger>
-        <TabsTrigger value="locations">
-          <WaypointsIcon data-icon="inline-start" />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="locations" aria-label="Show device locations">
           Locations
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </>
   )
 }

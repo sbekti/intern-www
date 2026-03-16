@@ -1,4 +1,4 @@
-import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { SecurityLoadingPanel } from "@/components/loading-panels"
 import { SecuritySessions } from "@/components/security-sessions"
 import { getProfile, listAdminAuthSessions, listProfileSessions } from "@/lib/api"
@@ -57,7 +57,7 @@ export default async function ProfileSecurityPage({
   const profile = await getProfile()
 
   if (!profile.ok) {
-    return <UnauthorizedState />
+    return <RequiredBackendState status={profile.status} />
   }
 
   if (hasForcedGlimmer(params)) {
@@ -67,7 +67,7 @@ export default async function ProfileSecurityPage({
   const sessions = await listProfileSessions({ limit, offset })
 
   if (!sessions.ok) {
-    return <UnauthorizedState />
+    return <RequiredBackendState status={sessions.status} />
   }
 
   const activeTab = profile.data.is_admin && requestedTab === "all" ? "all" : "mine"
@@ -77,11 +77,9 @@ export default async function ProfileSecurityPage({
       : null
 
   if (adminSessions && !adminSessions.ok) {
-    if (adminSessions.status === 401) {
-      return <UnauthorizedState />
-    }
-
-    return <ForbiddenState />
+    return (
+      <RequiredBackendState status={adminSessions.status} fallback="forbidden" />
+    )
   }
 
   return (

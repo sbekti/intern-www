@@ -3,7 +3,7 @@ import { ScrollTextIcon } from "lucide-react"
 
 import { AuditLogPagination } from "@/components/audit-log-pagination"
 import { AuditMetadataPreview } from "@/components/audit-metadata-preview"
-import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { LocalTimestamp } from "@/components/local-timestamp"
 import { AuditLogsLoadingPanel } from "@/components/loading-panels"
 import {
@@ -114,11 +114,7 @@ export default async function AuditLogsPage({
   })
 
   if (!auditLogs.ok) {
-    if (auditLogs.status === 401) {
-      return <UnauthorizedState />
-    }
-
-    return <ForbiddenState />
+    return <RequiredBackendState status={auditLogs.status} fallback="forbidden" />
   }
 
   const page = auditLogs.data

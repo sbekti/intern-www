@@ -1,6 +1,6 @@
-import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { DeviceManager } from "@/components/device-manager"
-import { NetworkDevicesTabs } from "@/components/network-devices-tabs"
+import type { DevicesTab } from "@/components/network-devices-tabs"
 import { ObservationPointManager } from "@/components/observation-point-manager"
 import { ObservedPresencePanel } from "@/components/observed-presence-panel"
 import { TableLoadingPanel } from "@/components/loading-panels"
@@ -14,8 +14,6 @@ import { createPageMetadata } from "@/lib/page-titles"
 import { hasForcedGlimmer } from "@/lib/utils"
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
-
-type DevicesTab = "managed" | "observed" | "locations"
 
 const defaultPageSize = 25
 const allowedPageSizes = [25, 50, 100, 200] as const
@@ -80,24 +78,15 @@ export default async function DevicesPage({
     const [devices, vlans] = await Promise.all([listDevices(), listVlans()])
 
     if (!devices.ok) {
-      if (devices.status === 403) {
-        return <ForbiddenState />
-      }
-
-      return <UnauthorizedState />
+      return <RequiredBackendState status={devices.status} />
     }
 
     if (!vlans.ok) {
-      if (vlans.status === 403) {
-        return <ForbiddenState />
-      }
-
-      return <UnauthorizedState />
+      return <RequiredBackendState status={vlans.status} />
     }
 
     return (
       <div className="grid gap-4 px-4 lg:px-6">
-        <NetworkDevicesTabs tab={tab} />
         <DeviceManager initialItems={devices.data.items} vlans={vlans.data.items} />
       </div>
     )
@@ -125,16 +114,11 @@ export default async function DevicesPage({
     })
 
     if (!observedClients.ok) {
-      if (observedClients.status === 403) {
-        return <ForbiddenState />
-      }
-
-      return <UnauthorizedState />
+      return <RequiredBackendState status={observedClients.status} />
     }
 
     return (
       <div className="grid gap-4 px-4 lg:px-6">
-        <NetworkDevicesTabs tab={tab} />
         <ObservedPresencePanel
           items={observedClients.data.items}
           pagination={observedClients.data.pagination}
@@ -168,16 +152,11 @@ export default async function DevicesPage({
   })
 
   if (!observationPoints.ok) {
-    if (observationPoints.status === 403) {
-      return <ForbiddenState />
-    }
-
-    return <UnauthorizedState />
+    return <RequiredBackendState status={observationPoints.status} />
   }
 
   return (
     <div className="grid gap-4 px-4 lg:px-6">
-      <NetworkDevicesTabs tab={tab} />
       <ObservationPointManager
         items={observationPoints.data.items}
         pagination={observationPoints.data.pagination}

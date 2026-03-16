@@ -1,6 +1,6 @@
 import { CloudSunIcon } from "lucide-react"
 
-import { UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { HomeLoadingPanel } from "@/components/loading-panels"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDashboard } from "@/lib/api"
@@ -56,7 +56,7 @@ export default async function HomePage({
   const dashboard = await getDashboard()
 
   if (!dashboard.ok) {
-    return <UnauthorizedState />
+    return <RequiredBackendState status={dashboard.status} />
   }
 
   return (

@@ -1,4 +1,4 @@
-import { ForbiddenState, UnauthorizedState } from "@/components/api-state"
+import { RequiredBackendState } from "@/components/api-state"
 import { TableLoadingPanel } from "@/components/loading-panels"
 import { VlanManager } from "@/components/vlan-manager"
 import { listVlans } from "@/lib/api"
@@ -23,11 +23,7 @@ export default async function VlansPage({
   const vlans = await listVlans()
 
   if (!vlans.ok) {
-    if (vlans.status === 403) {
-      return <ForbiddenState />
-    }
-
-    return <UnauthorizedState />
+    return <RequiredBackendState status={vlans.status} />
   }
 
   return (
