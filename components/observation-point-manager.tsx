@@ -46,7 +46,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import {
   Table,
   TableBody,
@@ -140,9 +139,6 @@ export function ObservationPointManager({
     setDraftFilters(filters)
   }, [filters])
 
-  const pageStart = pagination.total === 0 ? 0 : pagination.offset + 1
-  const pageEnd = Math.min(pagination.offset + items.length, pagination.total)
-
   function openEdit(item: PresenceObservationPoint) {
     setEditing(item)
     setEditState({
@@ -209,231 +205,220 @@ export function ObservationPointManager({
           ) : null
         }
       >
-        <div className="flex flex-col gap-6">
-          <form
-            className="flex flex-col gap-6"
-            onSubmit={(event) => {
-              event.preventDefault()
-              router.push(
-                buildObservationPointHref(draftFilters, {
-                  limit: pagination.limit,
-                  offset: 0,
-                })
-              )
-            }}
-          >
-            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <Field>
-                <FieldLabel htmlFor="observation-point-q">Search</FieldLabel>
-                <Input
-                  id="observation-point-q"
-                  value={draftFilters.q}
-                  onChange={(event) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      q: event.target.value,
-                    }))
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observation-point-medium">Medium</FieldLabel>
-                <Select
-                  value={draftFilters.medium || "all"}
-                  onValueChange={(value) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      medium: normalizeFilterValue(value ?? "all"),
-                    }))
-                  }
-                  items={mediumItems}
-                >
-                  <SelectTrigger id="observation-point-medium" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {mediumItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observation-point-source-type">
-                  Source Type
-                </FieldLabel>
-                <Select
-                  value={draftFilters.source_type || "all"}
-                  onValueChange={(value) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      source_type: normalizeFilterValue(value ?? "all"),
-                    }))
-                  }
-                  items={sourceTypeItems}
-                >
-                  <SelectTrigger
-                    id="observation-point-source-type"
-                    className="w-full"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {sourceTypeItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observation-point-source-key">
-                  Source Key
-                </FieldLabel>
-                <Input
-                  id="observation-point-source-key"
-                  value={draftFilters.source_key}
-                  onChange={(event) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      source_key: event.target.value,
-                    }))
-                  }
-                />
-              </Field>
-            </FieldGroup>
-            <div className="flex items-center gap-2">
-              <Button type="submit" size="sm">
-                Apply Filters
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const cleared = {
-                    q: "",
-                    source_type: "",
-                    source_key: "",
-                    medium: "",
-                  }
-                  setDraftFilters(cleared)
-                  router.push(
-                    buildObservationPointHref(cleared, { limit: 25, offset: 0 })
-                  )
-                }}
+        <form
+          className="flex flex-col gap-6"
+          onSubmit={(event) => {
+            event.preventDefault()
+            router.push(
+              buildObservationPointHref(draftFilters, {
+                limit: pagination.limit,
+                offset: 0,
+              })
+            )
+          }}
+        >
+          <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Field>
+              <FieldLabel htmlFor="observation-point-q">Search</FieldLabel>
+              <Input
+                id="observation-point-q"
+                value={draftFilters.q}
+                onChange={(event) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    q: event.target.value,
+                  }))
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observation-point-medium">Medium</FieldLabel>
+              <Select
+                value={draftFilters.medium || "all"}
+                onValueChange={(value) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    medium: normalizeFilterValue(value ?? "all"),
+                  }))
+                }
+                items={mediumItems}
               >
-                Clear
-              </Button>
-            </div>
-          </form>
-          <Separator />
-          <div className="flex flex-col gap-1">
-            <h3 className="font-medium text-foreground">Results</h3>
-            <p className="text-sm text-muted-foreground">
-            {items.length === 0
-              ? "No observation points matched the current filters."
-              : `Showing ${pageStart}-${pageEnd} of ${pagination.total} observation points.`}
-            </p>
+                <SelectTrigger id="observation-point-medium" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {mediumItems.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observation-point-source-type">
+                Source Type
+              </FieldLabel>
+              <Select
+                value={draftFilters.source_type || "all"}
+                onValueChange={(value) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    source_type: normalizeFilterValue(value ?? "all"),
+                  }))
+                }
+                items={sourceTypeItems}
+              >
+                <SelectTrigger
+                  id="observation-point-source-type"
+                  className="w-full"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {sourceTypeItems.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observation-point-source-key">
+                Source Key
+              </FieldLabel>
+              <Input
+                id="observation-point-source-key"
+                value={draftFilters.source_key}
+                onChange={(event) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    source_key: event.target.value,
+                  }))
+                }
+              />
+            </Field>
+          </FieldGroup>
+          <div className="flex items-center gap-2">
+            <Button type="submit" size="sm">
+              Apply Filters
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const cleared = {
+                  q: "",
+                  source_type: "",
+                  source_key: "",
+                  medium: "",
+                }
+                setDraftFilters(cleared)
+                router.push(
+                  buildObservationPointHref(cleared, { limit: 25, offset: 0 })
+                )
+              }}
+            >
+              Clear
+            </Button>
           </div>
-          {items.length === 0 ? (
-            <Empty className="min-h-[16rem] border bg-muted/20">
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <MapPinnedIcon />
-                </EmptyMedia>
-                <EmptyTitle>No observation points</EmptyTitle>
-                <EmptyDescription>
-                  Observation points appear automatically as UniFi and Juniper pollers
-                  discover them.
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Observation Point</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Location Label</TableHead>
-                  <TableHead>Last Seen</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="align-top">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-medium">
-                          {item.display_name || item.external_id}
+        </form>
+        {items.length === 0 ? (
+          <Empty className="min-h-[16rem] border bg-muted/20">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MapPinnedIcon />
+              </EmptyMedia>
+              <EmptyTitle>No observation points</EmptyTitle>
+              <EmptyDescription>
+                Observation points appear automatically as UniFi and Juniper pollers
+                discover them.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Observation Point</TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Location Label</TableHead>
+                <TableHead>Last Seen</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="align-top">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">
+                        {item.display_name || item.external_id}
+                      </span>
+                      {item.display_name && item.display_name !== item.external_id ? (
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {item.external_id}
                         </span>
-                        {item.display_name && item.display_name !== item.external_id ? (
-                          <span className="font-mono text-xs text-muted-foreground">
-                            {item.external_id}
-                          </span>
-                        ) : null}
-                        {item.parent_external_id ? (
-                          <span className="font-mono text-xs text-muted-foreground">
-                            Parent {item.parent_external_id}
-                          </span>
-                        ) : null}
-                        {item.ssid ? (
-                          <span className="truncate text-xs text-muted-foreground">
-                            SSID {item.ssid}
-                          </span>
-                        ) : null}
+                      ) : null}
+                      {item.parent_external_id ? (
+                        <span className="font-mono text-xs text-muted-foreground">
+                          Parent {item.parent_external_id}
+                        </span>
+                      ) : null}
+                      {item.ssid ? (
+                        <span className="truncate text-xs text-muted-foreground">
+                          SSID {item.ssid}
+                        </span>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-2">
+                      <Badge variant="outline">{mediumLabel(item.medium)}</Badge>
+                      <div className="text-sm text-muted-foreground">
+                        <div>{sourceTypeLabel(item.source_type)}</div>
+                        <div className="truncate text-xs">{item.source_key}</div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-2">
-                        <Badge variant="outline">{mediumLabel(item.medium)}</Badge>
-                        <div className="text-sm text-muted-foreground">
-                          <div>{sourceTypeLabel(item.source_type)}</div>
-                          <div className="truncate text-xs">{item.source_key}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <div className="flex flex-col gap-1">
-                        {item.location_label ? (
-                          <span className="font-medium">{item.location_label}</span>
-                        ) : (
-                          <span className="text-muted-foreground">Unlabeled</span>
-                        )}
-                        {item.notes ? (
-                          <span className="text-xs text-muted-foreground">
-                            {item.notes}
-                          </span>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <LocalTimestamp value={item.last_seen_at} />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="outline"
-                        size="icon-sm"
-                        onClick={() => openEdit(item)}
-                        aria-label="Edit location mapping"
-                      >
-                        <PencilIcon data-icon="inline-start" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <div className="flex flex-col gap-1">
+                      {item.location_label ? (
+                        <span className="font-medium">{item.location_label}</span>
+                      ) : (
+                        <span className="text-muted-foreground">Unlabeled</span>
+                      )}
+                      {item.notes ? (
+                        <span className="text-xs text-muted-foreground">
+                          {item.notes}
+                        </span>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <LocalTimestamp value={item.last_seen_at} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="icon-sm"
+                      onClick={() => openEdit(item)}
+                      aria-label="Edit location mapping"
+                    >
+                      <PencilIcon data-icon="inline-start" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </NetworkDevicesCard>
 
       <Dialog

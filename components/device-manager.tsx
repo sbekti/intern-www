@@ -232,132 +232,130 @@ export function DeviceManager({
           </Button>
         }
       >
-        <div className="flex flex-col gap-4">
-          {sortedVlans.length === 0 ? (
-            <Empty className="min-h-[16rem] border bg-muted/20">
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <MonitorSmartphoneIcon />
-                </EmptyMedia>
-                <EmptyTitle>No VLANs available</EmptyTitle>
-                <EmptyDescription>
-                  Create at least one VLAN before registering devices.
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          ) : sortedItems.length === 0 ? (
-            <Empty className="min-h-[16rem] border bg-muted/20">
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <MonitorSmartphoneIcon />
-                </EmptyMedia>
-                <EmptyTitle>No devices</EmptyTitle>
-                <EmptyDescription>
-                  Register the first device to assign it to a VLAN.
-                </EmptyDescription>
-              </EmptyHeader>
-              <EmptyContent>
-                <Button onClick={openCreate}>
-                  <PlusIcon data-icon="inline-start" />
-                  Add Device
-                </Button>
-              </EmptyContent>
-            </Empty>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>MAC Address</TableHead>
-                  <TableHead>VLAN</TableHead>
-                  <TableHead>Last Seen</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedItems.map((device) => (
-                  <TableRow key={device.id}>
-                    <TableCell className="font-medium">
-                      {device.display_name}
-                    </TableCell>
-                    <TableCell className="font-mono">{device.mac_address}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{device.vlan.name}</Badge>
-                    </TableCell>
-                    <TableCell className="min-w-[16rem]">
-                      {device.presence ? (
-                        <div className="flex flex-col gap-2">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge
-                              variant={
-                                device.presence.status === "online"
-                                  ? "secondary"
-                                  : "outline"
-                              }
-                            >
-                              {statusLabel(device.presence.status)}
-                            </Badge>
-                            <Badge variant="outline">
-                              {mediumLabel(device.presence.medium)}
-                            </Badge>
-                            <Badge variant="outline">
-                              {sourceTypeLabel(device.presence.source_type)}
-                            </Badge>
-                          </div>
-                          <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-                            <LocalTimestamp value={device.presence.last_seen_at} />
-                            {device.presence.location_label ? (
-                              <span>{device.presence.location_label}</span>
-                            ) : device.presence.observation_display_name ? (
-                              <span>{device.presence.observation_display_name}</span>
-                            ) : device.presence.observation_external_id ? (
-                              <span className="font-mono text-xs">
-                                {device.presence.observation_external_id}
-                              </span>
-                            ) : null}
-                            {device.presence.ssid ? (
-                              <span className="truncate text-xs">
-                                SSID {device.presence.ssid}
-                              </span>
-                            ) : null}
-                          </div>
+        {sortedVlans.length === 0 ? (
+          <Empty className="min-h-[16rem] border bg-muted/20">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MonitorSmartphoneIcon />
+              </EmptyMedia>
+              <EmptyTitle>No VLANs available</EmptyTitle>
+              <EmptyDescription>
+                Create at least one VLAN before registering devices.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : sortedItems.length === 0 ? (
+          <Empty className="min-h-[16rem] border bg-muted/20">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MonitorSmartphoneIcon />
+              </EmptyMedia>
+              <EmptyTitle>No devices</EmptyTitle>
+              <EmptyDescription>
+                Register the first device to assign it to a VLAN.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button onClick={openCreate}>
+                <PlusIcon data-icon="inline-start" />
+                Add Device
+              </Button>
+            </EmptyContent>
+          </Empty>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>MAC Address</TableHead>
+                <TableHead>VLAN</TableHead>
+                <TableHead>Last Seen</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedItems.map((device) => (
+                <TableRow key={device.id}>
+                  <TableCell className="font-medium">
+                    {device.display_name}
+                  </TableCell>
+                  <TableCell className="font-mono">{device.mac_address}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{device.vlan.name}</Badge>
+                  </TableCell>
+                  <TableCell className="min-w-[16rem]">
+                    {device.presence ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            variant={
+                              device.presence.status === "online"
+                                ? "secondary"
+                                : "outline"
+                            }
+                          >
+                            {statusLabel(device.presence.status)}
+                          </Badge>
+                          <Badge variant="outline">
+                            {mediumLabel(device.presence.medium)}
+                          </Badge>
+                          <Badge variant="outline">
+                            {sourceTypeLabel(device.presence.source_type)}
+                          </Badge>
                         </div>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">
-                          Never observed
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon-sm"
-                          className={iconOnlyButtonClass}
-                          onClick={() => openEdit(device)}
-                          aria-label="Edit device"
-                        >
-                          <PencilIcon data-icon="inline-start" />
-                          <IconOnlyButtonLabel>Edit</IconOnlyButtonLabel>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon-sm"
-                          className={responsiveCompactButtonClass}
-                          onClick={() => setDeleting(device)}
-                          aria-label="Delete device"
-                        >
-                          <Trash2Icon data-icon="inline-start" />
-                          <IconOnlyButtonLabel>Delete</IconOnlyButtonLabel>
-                        </Button>
+                        <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+                          <LocalTimestamp value={device.presence.last_seen_at} />
+                          {device.presence.location_label ? (
+                            <span>{device.presence.location_label}</span>
+                          ) : device.presence.observation_display_name ? (
+                            <span>{device.presence.observation_display_name}</span>
+                          ) : device.presence.observation_external_id ? (
+                            <span className="font-mono text-xs">
+                              {device.presence.observation_external_id}
+                            </span>
+                          ) : null}
+                          {device.presence.ssid ? (
+                            <span className="truncate text-xs">
+                              SSID {device.presence.ssid}
+                            </span>
+                          ) : null}
+                        </div>
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        Never observed
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon-sm"
+                        className={iconOnlyButtonClass}
+                        onClick={() => openEdit(device)}
+                        aria-label="Edit device"
+                      >
+                        <PencilIcon data-icon="inline-start" />
+                        <IconOnlyButtonLabel>Edit</IconOnlyButtonLabel>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon-sm"
+                        className={responsiveCompactButtonClass}
+                        onClick={() => setDeleting(device)}
+                        aria-label="Delete device"
+                      >
+                        <Trash2Icon data-icon="inline-start" />
+                        <IconOnlyButtonLabel>Delete</IconOnlyButtonLabel>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </NetworkDevicesCard>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
