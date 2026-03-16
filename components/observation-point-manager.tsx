@@ -192,6 +192,8 @@ export function ObservationPointManager({
     <>
       <NetworkDevicesCard
         tab="locations"
+        title="Location Mappings"
+        description="Search by source, location label, notes, SSID, or raw observation ID."
         footer={
           items.length > 0 ? (
             <TablePagination
@@ -208,12 +210,6 @@ export function ObservationPointManager({
         }
       >
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="font-semibold text-foreground">Location mappings</h2>
-            <p className="text-sm text-muted-foreground">
-              Search by source, location label, notes, SSID, or raw observation ID.
-            </p>
-          </div>
           <form
             className="flex flex-col gap-6"
             onSubmit={(event) => {

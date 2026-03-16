@@ -117,6 +117,8 @@ export function ObservedPresencePanel({
   return (
     <NetworkDevicesCard
       tab="observed"
+      title="Observed Clients"
+      description="Search by MAC, managed name, location, or observation point."
       footer={
         items.length > 0 ? (
           <TablePagination
@@ -133,12 +135,6 @@ export function ObservedPresencePanel({
       }
     >
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <h2 className="font-semibold text-foreground">Observed clients</h2>
-          <p className="text-sm text-muted-foreground">
-            Search by MAC, managed name, location, or observation point.
-          </p>
-        </div>
         <form
           className="flex flex-col gap-6"
           onSubmit={(event) => {

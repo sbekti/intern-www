@@ -15,6 +15,8 @@ import {
 
 type NetworkDevicesCardProps = {
   tab: DevicesTab
+  title: string
+  description: string
   action?: ReactNode
   children: ReactNode
   footer?: ReactNode
@@ -22,6 +24,8 @@ type NetworkDevicesCardProps = {
 
 export function NetworkDevicesCard({
   tab,
+  title,
+  description,
   action,
   children,
   footer,
@@ -30,10 +34,8 @@ export function NetworkDevicesCard({
     <Card className="border-border/70 shadow-xs">
       <CardHeader>
         <div className="flex flex-col gap-1">
-          <CardTitle>Devices</CardTitle>
-          <CardDescription>
-            Manage inventory, observed network clients, and location mappings.
-          </CardDescription>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

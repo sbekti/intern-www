@@ -217,6 +217,8 @@ export function DeviceManager({
     <>
       <NetworkDevicesCard
         tab="managed"
+        title="Devices"
+        description="Register devices and assign each MAC address to the correct VLAN."
         action={
           <Button
             size="icon-sm"
@@ -231,12 +233,6 @@ export function DeviceManager({
         }
       >
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <h2 className="font-semibold text-foreground">Managed inventory</h2>
-            <p className="text-sm text-muted-foreground">
-              Register devices and assign each MAC address to the correct VLAN.
-            </p>
-          </div>
           {sortedVlans.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>
