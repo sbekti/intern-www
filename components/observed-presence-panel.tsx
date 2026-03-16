@@ -10,18 +10,10 @@ import type {
 } from "@/lib/api"
 import { mediumLabel, sourceTypeLabel, statusLabel } from "@/lib/presence"
 import { LocalTimestamp } from "@/components/local-timestamp"
-import { NetworkDevicesScopeControl } from "@/components/network-devices-tabs"
+import { NetworkDevicesCard } from "@/components/network-devices-card"
 import { TablePagination } from "@/components/table-pagination"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   Empty,
   EmptyDescription,
@@ -39,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import {
   Table,
   TableBody,
@@ -122,293 +115,286 @@ export function ObservedPresencePanel({
   const pageEnd = Math.min(pagination.offset + items.length, pagination.total)
 
   return (
-    <div className="grid gap-4">
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>
+    <NetworkDevicesCard
+      tab="observed"
+      footer={
+        items.length > 0 ? (
+          <TablePagination
+            pageSizeId="observed-presence-page-size"
+            limit={pagination.limit}
+            offset={pagination.offset}
+            total={pagination.total}
+            pageSizes={allowedPageSizes}
+            buildHref={({ limit, offset }) =>
+              buildObservedHref(filters, { limit, offset })
+            }
+          />
+        ) : null
+      }
+    >
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-semibold text-foreground">Observed clients</h2>
+          <p className="text-sm text-muted-foreground">
             Search by MAC, managed name, location, or observation point.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="min-w-0">
-            <NetworkDevicesScopeControl tab="observed" />
-          </div>
-          <form
-            className="flex flex-col gap-6"
-            onSubmit={(event) => {
-              event.preventDefault()
-              router.push(
-                buildObservedHref(draftFilters, {
-                  limit: pagination.limit,
-                  offset: 0,
-                })
-              )
-            }}
-          >
-            <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              <Field>
-                <FieldLabel htmlFor="observed-q">Search</FieldLabel>
-                <Input
-                  id="observed-q"
-                  value={draftFilters.q}
-                  onChange={(event) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      q: event.target.value,
-                    }))
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observed-status">Status</FieldLabel>
-                <Select
-                  value={draftFilters.status || "all"}
-                  onValueChange={(value) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      status: normalizeFilterValue(value ?? "all"),
-                    }))
-                  }
-                  items={statusItems}
-                >
-                  <SelectTrigger id="observed-status" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {statusItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observed-medium">Medium</FieldLabel>
-                <Select
-                  value={draftFilters.medium || "all"}
-                  onValueChange={(value) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      medium: normalizeFilterValue(value ?? "all"),
-                    }))
-                  }
-                  items={mediumItems}
-                >
-                  <SelectTrigger id="observed-medium" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {mediumItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observed-source-type">Source Type</FieldLabel>
-                <Select
-                  value={draftFilters.source_type || "all"}
-                  onValueChange={(value) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      source_type: normalizeFilterValue(value ?? "all"),
-                    }))
-                  }
-                  items={sourceTypeItems}
-                >
-                  <SelectTrigger id="observed-source-type" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {sourceTypeItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observed-source-key">Source Key</FieldLabel>
-                <Input
-                  id="observed-source-key"
-                  value={draftFilters.source_key}
-                  onChange={(event) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      source_key: event.target.value,
-                    }))
-                  }
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="observed-location">Location</FieldLabel>
-                <Input
-                  id="observed-location"
-                  value={draftFilters.location}
-                  onChange={(event) =>
-                    setDraftFilters((current) => ({
-                      ...current,
-                      location: event.target.value,
-                    }))
-                  }
-                />
-              </Field>
-            </FieldGroup>
-            <div className="flex items-center gap-2">
-              <Button type="submit" size="sm">
-                Apply Filters
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setDraftFilters({
-                    q: "",
-                    status: "",
-                    source_type: "",
-                    source_key: "",
-                    medium: "",
-                    location: "",
-                  })
-                  router.push(
-                    buildObservedHref(
-                      {
-                        q: "",
-                        status: "",
-                        source_type: "",
-                        source_key: "",
-                        medium: "",
-                        location: "",
-                      },
-                      { limit: 25, offset: 0 }
-                    )
-                  )
-                }}
+          </p>
+        </div>
+        <form
+          className="flex flex-col gap-6"
+          onSubmit={(event) => {
+            event.preventDefault()
+            router.push(
+              buildObservedHref(draftFilters, {
+                limit: pagination.limit,
+                offset: 0,
+              })
+            )
+          }}
+        >
+          <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <Field>
+              <FieldLabel htmlFor="observed-q">Search</FieldLabel>
+              <Input
+                id="observed-q"
+                value={draftFilters.q}
+                onChange={(event) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    q: event.target.value,
+                  }))
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observed-status">Status</FieldLabel>
+              <Select
+                value={draftFilters.status || "all"}
+                onValueChange={(value) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    status: normalizeFilterValue(value ?? "all"),
+                  }))
+                }
+                items={statusItems}
               >
-                Clear
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Observed Clients</CardTitle>
-          <CardDescription>
+                <SelectTrigger id="observed-status" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {statusItems.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observed-medium">Medium</FieldLabel>
+              <Select
+                value={draftFilters.medium || "all"}
+                onValueChange={(value) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    medium: normalizeFilterValue(value ?? "all"),
+                  }))
+                }
+                items={mediumItems}
+              >
+                <SelectTrigger id="observed-medium" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {mediumItems.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observed-source-type">Source Type</FieldLabel>
+              <Select
+                value={draftFilters.source_type || "all"}
+                onValueChange={(value) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    source_type: normalizeFilterValue(value ?? "all"),
+                  }))
+                }
+                items={sourceTypeItems}
+              >
+                <SelectTrigger id="observed-source-type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {sourceTypeItems.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observed-source-key">Source Key</FieldLabel>
+              <Input
+                id="observed-source-key"
+                value={draftFilters.source_key}
+                onChange={(event) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    source_key: event.target.value,
+                  }))
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="observed-location">Location</FieldLabel>
+              <Input
+                id="observed-location"
+                value={draftFilters.location}
+                onChange={(event) =>
+                  setDraftFilters((current) => ({
+                    ...current,
+                    location: event.target.value,
+                  }))
+                }
+              />
+            </Field>
+          </FieldGroup>
+          <div className="flex items-center gap-2">
+            <Button type="submit" size="sm">
+              Apply Filters
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setDraftFilters({
+                  q: "",
+                  status: "",
+                  source_type: "",
+                  source_key: "",
+                  medium: "",
+                  location: "",
+                })
+                router.push(
+                  buildObservedHref(
+                    {
+                      q: "",
+                      status: "",
+                      source_type: "",
+                      source_key: "",
+                      medium: "",
+                      location: "",
+                    },
+                    { limit: 25, offset: 0 }
+                  )
+                )
+              }}
+            >
+              Clear
+            </Button>
+          </div>
+        </form>
+        <Separator />
+        <div className="flex flex-col gap-1">
+          <h3 className="font-medium text-foreground">Results</h3>
+          <p className="text-sm text-muted-foreground">
             {items.length === 0
               ? "No observed clients matched the current filters."
               : `Showing ${pageStart}-${pageEnd} of ${pagination.total} observed clients.`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {items.length === 0 ? (
-            <Empty className="min-h-[16rem] border bg-muted/20">
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <RadarIcon />
-                </EmptyMedia>
-                <EmptyTitle>No observed clients</EmptyTitle>
-                <EmptyDescription>
-                  Wait for new network presence or widen the current filters.
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>MAC Address</TableHead>
-                  <TableHead>Managed Match</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Last Seen</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-mono">{item.mac_address}</TableCell>
-                    <TableCell>
-                      {item.managed_device_name ? (
-                        <span className="font-medium">{item.managed_device_name}</span>
+          </p>
+        </div>
+        {items.length === 0 ? (
+          <Empty className="min-h-[16rem] border bg-muted/20">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <RadarIcon />
+              </EmptyMedia>
+              <EmptyTitle>No observed clients</EmptyTitle>
+              <EmptyDescription>
+                Wait for new network presence or widen the current filters.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>MAC Address</TableHead>
+                <TableHead>Managed Match</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Last Seen</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="font-mono">{item.mac_address}</TableCell>
+                  <TableCell>
+                    {item.managed_device_name ? (
+                      <span className="font-medium">{item.managed_device_name}</span>
+                    ) : (
+                      <span className="text-muted-foreground">Unmanaged</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={item.status === "online" ? "secondary" : "outline"}
+                    >
+                      {statusLabel(item.status)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-2">
+                      <Badge variant="outline">{mediumLabel(item.medium)}</Badge>
+                      <div className="text-sm text-muted-foreground">
+                        <div>{sourceTypeLabel(item.source_type)}</div>
+                        <div className="truncate text-xs">{item.source_key}</div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <div className="flex flex-col gap-1">
+                      {item.location_label ? (
+                        <span className="font-medium">{item.location_label}</span>
+                      ) : item.observation_display_name ? (
+                        <span>{item.observation_display_name}</span>
+                      ) : item.observation_external_id ? (
+                        <span className="font-mono text-xs">
+                          {item.observation_external_id}
+                        </span>
                       ) : (
-                        <span className="text-muted-foreground">Unmanaged</span>
+                        <span className="text-muted-foreground">Unknown</span>
                       )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={item.status === "online" ? "secondary" : "outline"}
-                      >
-                        {statusLabel(item.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-2">
-                        <Badge variant="outline">{mediumLabel(item.medium)}</Badge>
-                        <div className="text-sm text-muted-foreground">
-                          <div>{sourceTypeLabel(item.source_type)}</div>
-                          <div className="truncate text-xs">{item.source_key}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <div className="flex flex-col gap-1">
-                        {item.location_label ? (
-                          <span className="font-medium">{item.location_label}</span>
-                        ) : item.observation_display_name ? (
-                          <span>{item.observation_display_name}</span>
-                        ) : item.observation_external_id ? (
-                          <span className="font-mono text-xs">
-                            {item.observation_external_id}
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">Unknown</span>
-                        )}
-                        {item.ssid ? (
-                          <span className="truncate text-xs text-muted-foreground">
-                            SSID {item.ssid}
-                          </span>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <LocalTimestamp value={item.last_seen_at} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-        {items.length > 0 ? (
-          <CardFooter>
-            <TablePagination
-              pageSizeId="observed-presence-page-size"
-              limit={pagination.limit}
-              offset={pagination.offset}
-              total={pagination.total}
-              pageSizes={allowedPageSizes}
-              buildHref={({ limit, offset }) =>
-                buildObservedHref(filters, { limit, offset })
-              }
-            />
-          </CardFooter>
-        ) : null}
-      </Card>
-    </div>
+                      {item.ssid ? (
+                        <span className="truncate text-xs text-muted-foreground">
+                          SSID {item.ssid}
+                        </span>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <LocalTimestamp value={item.last_seen_at} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
+    </NetworkDevicesCard>
   )
 }

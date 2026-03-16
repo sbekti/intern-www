@@ -12,18 +12,10 @@ import type {
 import { buildBffPath } from "@/lib/bff"
 import { mediumLabel, sourceTypeLabel } from "@/lib/presence"
 import { LocalTimestamp } from "@/components/local-timestamp"
-import { NetworkDevicesScopeControl } from "@/components/network-devices-tabs"
+import { NetworkDevicesCard } from "@/components/network-devices-card"
 import { TablePagination } from "@/components/table-pagination"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -54,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import {
   Table,
   TableBody,
@@ -196,17 +189,30 @@ export function ObservationPointManager({
   }
 
   return (
-    <div className="grid gap-4">
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>
-            Search by source, location label, notes, SSID, or raw observation ID.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="min-w-0">
-            <NetworkDevicesScopeControl tab="locations" />
+    <>
+      <NetworkDevicesCard
+        tab="locations"
+        footer={
+          items.length > 0 ? (
+            <TablePagination
+              pageSizeId="observation-point-page-size"
+              limit={pagination.limit}
+              offset={pagination.offset}
+              total={pagination.total}
+              pageSizes={allowedPageSizes}
+              buildHref={({ limit, offset }) =>
+                buildObservationPointHref(filters, { limit, offset })
+              }
+            />
+          ) : null
+        }
+      >
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="font-semibold text-foreground">Location mappings</h2>
+            <p className="text-sm text-muted-foreground">
+              Search by source, location label, notes, SSID, or raw observation ID.
+            </p>
           </div>
           <form
             className="flex flex-col gap-6"
@@ -332,19 +338,15 @@ export function ObservationPointManager({
               </Button>
             </div>
           </form>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/70 shadow-xs">
-        <CardHeader>
-          <CardTitle>Location Mappings</CardTitle>
-          <CardDescription>
+          <Separator />
+          <div className="flex flex-col gap-1">
+            <h3 className="font-medium text-foreground">Results</h3>
+            <p className="text-sm text-muted-foreground">
             {items.length === 0
               ? "No observation points matched the current filters."
               : `Showing ${pageStart}-${pageEnd} of ${pagination.total} observation points.`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+            </p>
+          </div>
           {items.length === 0 ? (
             <Empty className="min-h-[16rem] border bg-muted/20">
               <EmptyHeader>
@@ -435,22 +437,8 @@ export function ObservationPointManager({
               </TableBody>
             </Table>
           )}
-        </CardContent>
-        {items.length > 0 ? (
-          <CardFooter>
-            <TablePagination
-              pageSizeId="observation-point-page-size"
-              limit={pagination.limit}
-              offset={pagination.offset}
-              total={pagination.total}
-              pageSizes={allowedPageSizes}
-              buildHref={({ limit, offset }) =>
-                buildObservationPointHref(filters, { limit, offset })
-              }
-            />
-          </CardFooter>
-        ) : null}
-      </Card>
+        </div>
+      </NetworkDevicesCard>
 
       <Dialog
         open={Boolean(editing)}
@@ -517,6 +505,6 @@ export function ObservationPointManager({
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }
