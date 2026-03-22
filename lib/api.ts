@@ -38,6 +38,7 @@ export type NetworkDevice = {
   id: string
   mac_address: string
   display_name: string
+  disabled: boolean
   vlan: {
     name: string
     vlan_id: number

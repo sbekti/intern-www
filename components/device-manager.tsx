@@ -54,11 +54,14 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import {
+  FieldContent,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
+  FieldLegend,
   FieldLabel,
+  FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -69,11 +72,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 type DeviceFormState = {
   display_name: string
   mac_address: string
+  disabled: boolean
   vlan_id: string
 }
 
@@ -85,13 +97,17 @@ type ApiError = {
 const defaultFormState: DeviceFormState = {
   display_name: "",
   mac_address: "",
+  disabled: false,
   vlan_id: "",
 }
+
+const deviceDisabledFieldId = "device-disabled"
 
 function mapDeviceToForm(device: NetworkDevice): DeviceFormState {
   return {
     display_name: device.display_name,
     mac_address: device.mac_address,
+    disabled: device.disabled,
     vlan_id: String(device.vlan.vlan_id),
   }
 }
@@ -158,17 +174,12 @@ export function DeviceManager({
     setSubmitting(true)
     setSubmitError(null)
 
-    const payload = editing
-      ? {
-          mac_address: form.mac_address.trim(),
-          display_name: form.display_name.trim(),
-          vlan_id: Number(form.vlan_id),
-        }
-      : {
-          display_name: form.display_name.trim(),
-          mac_address: form.mac_address.trim(),
-          vlan_id: Number(form.vlan_id),
-        }
+    const payload = {
+      display_name: form.display_name.trim(),
+      mac_address: form.mac_address.trim(),
+      disabled: form.disabled,
+      vlan_id: Number(form.vlan_id),
+    }
 
     const response = await fetch(
       editing
@@ -202,9 +213,12 @@ export function DeviceManager({
 
     setDeletingBusy(true)
 
-    const response = await fetch(buildBffPath(`/networks/devices/${deleting.id}`), {
-      method: "DELETE",
-    })
+    const response = await fetch(
+      buildBffPath(`/networks/devices/${deleting.id}`),
+      {
+        method: "DELETE",
+      }
+    )
 
     if (!response.ok) {
       setDeletingBusy(false)
@@ -279,6 +293,7 @@ export function DeviceManager({
                   <TableHead>Name</TableHead>
                   <TableHead>MAC Address</TableHead>
                   <TableHead>VLAN</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -288,9 +303,14 @@ export function DeviceManager({
                     <TableCell className="font-medium">
                       {device.display_name}
                     </TableCell>
-                    <TableCell className="font-mono">{device.mac_address}</TableCell>
+                    <TableCell className="font-mono">
+                      {device.mac_address}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{device.vlan.name}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {device.disabled ? "Disabled" : "Enabled"}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -327,11 +347,13 @@ export function DeviceManager({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit device" : "Create device"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Edit device" : "Create device"}
+            </DialogTitle>
             <DialogDescription>
               {editing
-                ? "Update the device name, MAC address, or VLAN assignment."
-                : "Register a MAC address and attach it to a VLAN."}
+                ? "Update the device name, MAC address, VLAN assignment, or authentication state."
+                : "Register a MAC address, attach it to a VLAN, and choose whether it should authenticate through RADIUS."}
             </DialogDescription>
           </DialogHeader>
           <form className="grid gap-6" onSubmit={handleSubmit}>
@@ -364,7 +386,8 @@ export function DeviceManager({
                   required
                 />
                 <FieldDescription>
-                  Accepted formats include colon, hyphen, dotted, or bare hexadecimal.
+                  Accepted formats include colon, hyphen, dotted, or bare
+                  hexadecimal.
                 </FieldDescription>
               </Field>
               <Field>
@@ -388,7 +411,10 @@ export function DeviceManager({
                   <SelectContent>
                     <SelectGroup>
                       {sortedVlans.map((vlan) => (
-                        <SelectItem key={vlan.vlan_id} value={String(vlan.vlan_id)}>
+                        <SelectItem
+                          key={vlan.vlan_id}
+                          value={String(vlan.vlan_id)}
+                        >
                           {vlan.name}
                         </SelectItem>
                       ))}
@@ -396,6 +422,31 @@ export function DeviceManager({
                   </SelectContent>
                 </Select>
               </Field>
+              <FieldSet>
+                <FieldLegend variant="label">Authentication</FieldLegend>
+                <Field orientation="horizontal" className="items-start">
+                  <Checkbox
+                    id={deviceDisabledFieldId}
+                    checked={form.disabled}
+                    onCheckedChange={(checked) =>
+                      setForm((current) => ({
+                        ...current,
+                        disabled: checked,
+                      }))
+                    }
+                  />
+                  <FieldContent>
+                    <FieldLabel htmlFor={deviceDisabledFieldId}>
+                      Disable this device
+                    </FieldLabel>
+                    <FieldDescription>
+                      Disabled devices stay visible and keep their MAC address,
+                      but they are excluded from RADIUS authentication until
+                      they are enabled again.
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+              </FieldSet>
               <FieldError>{submitError}</FieldError>
             </FieldGroup>
             <DialogFooter>
@@ -408,7 +459,11 @@ export function DeviceManager({
                 Cancel
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Saving..." : editing ? "Save changes" : "Create device"}
+                {submitting
+                  ? "Saving..."
+                  : editing
+                    ? "Save changes"
+                    : "Create device"}
               </Button>
             </DialogFooter>
           </form>
@@ -429,7 +484,9 @@ export function DeviceManager({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deletingBusy}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deletingBusy}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction disabled={deletingBusy} onClick={handleDelete}>
               {deletingBusy ? "Deleting..." : "Delete device"}
             </AlertDialogAction>
